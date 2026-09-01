@@ -6,29 +6,31 @@
 <title>Command Center — visual mockup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-/* Hallmark · genre: modern-minimal · macrostructure: Bento Grid (adapted, no hero/CTA/footer) · theme: Cobalt · enrichment: none · nav: none (single-screen app) · footer: none */
+/* Hallmark · genre: modern-minimal · macrostructure: tabbed app (adapted, no hero/CTA/footer)
+ * theme: custom (CaptivateIQ brand DNA — warm cream paper oklch(97% 0.006 85),
+ * dark navy ink oklch(21% 0.03 258), accent oklch(55% 0.14 225), Poppins wordmark
+ * + IBM Plex Sans body + JetBrains Mono labels) · tabs: BoB / Calendar / To Dos */
 
 :root {
-  /* Cobalt tokens — cool engineered paper, one electric-blue signal */
-  --color-paper:      oklch(98.5% 0.004 250);
-  --color-paper-2:    oklch(96%   0.005 250);
-  --color-ink:        oklch(24%   0.02  258);
-  --color-ink-2:      oklch(34%   0.018 257);
-  --color-muted:      oklch(56%   0.012 255);
-  --color-rule:       oklch(88%   0.008 252);
-  --color-rule-2:     oklch(80%   0.010 252);
-  --color-accent:     oklch(58%   0.20  256);
-  --color-accent-ink: oklch(98%   0.01  256);
-  --color-graphite:   oklch(22%   0.016 260);
-  --color-graphite-ink: oklch(92% 0.008 255);
-  --color-graphite-muted: oklch(66% 0.012 255);
-  --color-warn:       oklch(62%   0.10   55);
-  --color-good:       oklch(58%   0.09  150);
+  --color-paper:      oklch(97%   0.006 85);
+  --color-paper-2:    oklch(94.5% 0.007 85);
+  --color-ink:        oklch(21%   0.03  258);
+  --color-ink-2:      oklch(32%   0.022 258);
+  --color-muted:      oklch(55%   0.014 250);
+  --color-rule:       oklch(85%   0.006 85);
+  --color-rule-2:     oklch(76%   0.008 85);
+  --color-accent:     oklch(55%   0.14  225);
+  --color-accent-ink: oklch(98%   0.01  225);
+  --color-graphite:   oklch(21%   0.03  258);
+  --color-graphite-ink: oklch(93% 0.008 85);
+  --color-graphite-muted: oklch(64% 0.014 250);
+  --color-warn:       oklch(62%   0.11   55);
+  --color-good:       oklch(58%   0.10  150);
 
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-body:    "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-body:    "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono:    "JetBrains Mono", ui-monospace, monospace;
 
   --text-xs:  0.6875rem;
@@ -62,10 +64,7 @@ body {
   font-size: var(--text-base);
   line-height: 1.5;
 }
-
 a { color: var(--color-accent); }
-a:hover { text-decoration-color: var(--color-accent); }
-
 .mono-label {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -73,10 +72,9 @@ a:hover { text-decoration-color: var(--color-accent); }
   letter-spacing: 0.06em;
   color: var(--color-muted);
 }
-
 .tabular { font-variant-numeric: tabular-nums; }
 
-/* ---- Status bar — the one dark graphite band, functional not decorative ---- */
+/* ---- Status bar ---- */
 .statusbar {
   background: var(--color-graphite);
   color: var(--color-graphite-ink);
@@ -89,245 +87,147 @@ a:hover { text-decoration-color: var(--color-accent); }
 }
 .statusbar .wordmark {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--text-lg);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   display: flex;
   align-items: center;
   gap: var(--space-xs);
 }
-.live-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  flex-shrink: 0;
-}
-.statusbar .syncs {
-  display: flex;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-}
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-accent); flex-shrink: 0; }
+.statusbar .syncs { display: flex; gap: var(--space-md); flex-wrap: wrap; }
 .sync-chip {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-graphite-muted);
-  display: flex;
-  gap: var(--space-2xs);
+  font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--color-graphite-muted); display: flex; gap: var(--space-2xs);
 }
 .sync-chip b { color: var(--color-graphite-ink); font-weight: 500; }
 
-/* ---- Page shell ---- */
-.shell {
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: var(--space-lg);
+/* ---- Tab strip ---- */
+.tabstrip {
   display: flex;
-  flex-direction: column;
   gap: var(--space-lg);
+  padding: 0 var(--space-lg);
+  border-bottom: 1px solid var(--color-rule);
+  background: var(--color-paper);
 }
+.tab {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  background: none;
+  border: none;
+  padding: var(--space-sm) var(--space-2xs);
+  cursor: pointer;
+  position: relative;
+  transition: color .15s var(--ease-out);
+}
+.tab::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 2px;
+  background: transparent;
+  transition: background .15s var(--ease-out);
+}
+.tab:hover { color: var(--color-ink-2); }
+.tab:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.tab[aria-selected="true"] { color: var(--color-ink); }
+.tab[aria-selected="true"]::after { background: var(--color-accent); }
+
+/* ---- Shell ---- */
+.shell { max-width: 1360px; margin: 0 auto; padding: var(--space-lg); display: flex; flex-direction: column; gap: var(--space-lg); }
+.tabpanel { display: none; flex-direction: column; gap: var(--space-lg); }
+.tabpanel.is-active { display: flex; }
 
 /* ---- KPI row ---- */
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: var(--space-sm);
-}
-.kpi {
-  border: 1px solid var(--color-rule);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  background: var(--color-paper);
-}
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--space-sm); }
+.kpi { border: 1px solid var(--color-rule); border-radius: var(--radius-md); padding: var(--space-md); background: var(--color-paper); }
 .kpi .mono-label { display: block; margin-bottom: var(--space-2xs); }
-.kpi .value {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-xl);
-  color: var(--color-ink);
-  letter-spacing: -0.02em;
-}
+.kpi .value { font-family: var(--font-body); font-weight: 600; font-size: var(--text-xl); color: var(--color-ink); }
 
 /* ---- Panel shell ---- */
-.panel {
-  border: 1px solid var(--color-rule);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: var(--color-paper);
-}
-.panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-sm) var(--space-md);
-  border-bottom: 1px solid var(--color-rule);
-}
-.panel-head h2 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-md);
-  color: var(--color-ink);
-  margin: 0;
-  letter-spacing: -0.01em;
-}
+.panel { border: 1px solid var(--color-rule); border-radius: var(--radius-md); overflow: hidden; background: var(--color-paper); }
+.panel-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--color-rule); }
+.panel-head h2 { font-family: var(--font-body); font-weight: 600; font-size: var(--text-md); color: var(--color-ink); margin: 0; }
 .refresh-btn {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-ink-2);
-  background: transparent;
-  border: 1px solid var(--color-rule-2);
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: border-color .15s var(--ease-out), color .15s var(--ease-out);
+  font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--color-ink-2); background: transparent; border: 1px solid var(--color-rule-2); border-radius: var(--radius-sm);
+  padding: 6px 10px; cursor: pointer; transition: border-color .15s var(--ease-out), color .15s var(--ease-out);
 }
 .refresh-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
 .refresh-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .refresh-btn:active { transform: translateY(1px); }
-.refresh-btn:disabled { color: var(--color-muted); border-color: var(--color-rule); cursor: default; }
 
-/* ---- Book of Business table ---- */
+/* ---- BoB table ---- */
 .bob-table { width: 100%; border-collapse: collapse; }
 .bob-table thead th {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-muted);
-  text-align: left;
-  font-weight: 500;
-  padding: var(--space-xs) var(--space-md);
-  border-bottom: 1px solid var(--color-rule);
-  background: var(--color-paper-2);
+  font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--color-muted); text-align: left; font-weight: 500; padding: var(--space-xs) var(--space-md);
+  border-bottom: 1px solid var(--color-rule); background: var(--color-paper-2);
 }
-.bob-table tbody td {
-  padding: var(--space-sm) var(--space-md);
-  border-bottom: 1px solid var(--color-rule);
-  font-size: var(--text-sm);
-  vertical-align: middle;
-}
+.bob-table tbody td { padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--color-rule); font-size: var(--text-sm); }
 .bob-table tbody tr:last-child td { border-bottom: none; }
 .bob-table tbody tr:hover { background: var(--color-paper-2); }
-.account-name { font-weight: 500; color: var(--color-ink); }
+.account-name { font-weight: 600; color: var(--color-ink); }
 .chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-rule-2);
-  color: var(--color-ink-2);
+  display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: var(--text-xs);
+  text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 8px; border-radius: var(--radius-sm);
+  border: 1px solid var(--color-rule-2); color: var(--color-ink-2);
 }
-.chip::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-muted);
-}
+.chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--color-muted); }
 .chip.is-thriving::before { background: var(--color-good); }
 .chip.is-watching::before { background: var(--color-warn); }
 
-/* ---- Today / Todos two-up ---- */
-.split {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: var(--space-lg);
+/* ---- Calendar (weekly) ---- */
+.week-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-sm); }
+.day-col { border: 1px solid var(--color-rule); border-radius: var(--radius-md); background: var(--color-paper); display: flex; flex-direction: column; min-width: 0; }
+.day-head {
+  font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--color-muted); padding: var(--space-sm) var(--space-sm) var(--space-xs); border-bottom: 1px solid var(--color-rule);
 }
-
-.meeting-card {
-  padding: var(--space-md);
-  border-bottom: 1px solid var(--color-rule);
-}
-.meeting-card:last-child { border-bottom: none; }
-.meeting-meta {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-accent);
-  margin-bottom: var(--space-xs);
-}
-.meeting-brief {
-  font-size: var(--text-sm);
-  color: var(--color-ink-2);
-  line-height: 1.55;
-  margin: 0 0 var(--space-sm);
-}
+.day-head b { color: var(--color-ink); font-weight: 600; }
+.meeting-card { padding: var(--space-sm); border-bottom: 1px solid var(--color-rule); }
+.day-col .meeting-card:last-child { border-bottom: none; }
+.meeting-meta { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-accent); margin-bottom: var(--space-2xs); }
+.meeting-brief { font-size: var(--text-sm); color: var(--color-ink-2); line-height: 1.5; margin: 0 0 var(--space-xs); }
 .note-field {
-  font-family: var(--font-body);
-  font-size: var(--text-sm);
-  color: var(--color-muted);
-  border: 1px dashed var(--color-rule-2);
-  border-radius: var(--radius-sm);
-  padding: var(--space-xs) var(--space-sm);
-  cursor: text;
-  transition: border-color .15s var(--ease-out), color .15s var(--ease-out);
+  font-family: var(--font-body); font-size: var(--text-sm); color: var(--color-muted); border: 1px dashed var(--color-rule-2);
+  border-radius: var(--radius-sm); padding: var(--space-2xs) var(--space-xs); cursor: text; transition: border-color .15s var(--ease-out);
 }
 .note-field:hover { border-color: var(--color-accent); color: var(--color-ink-2); }
 .note-field:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-style: solid; }
+.day-empty { padding: var(--space-sm); font-size: var(--text-sm); color: var(--color-muted); }
 
-/* ---- Todo rows ---- */
-.todo-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  border-bottom: 1px solid var(--color-rule);
+/* ---- Kanban ---- */
+.kanban { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-sm); }
+.kanban-col { border: 1px solid var(--color-rule); border-radius: var(--radius-md); background: var(--color-paper); min-width: 0; }
+.kanban-head {
+  display: flex; align-items: center; justify-content: space-between; padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-rule); font-family: var(--font-mono); font-size: var(--text-xs);
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted);
 }
-.todo-row:last-child { border-bottom: none; }
-.todo-check {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  border: 1.5px solid var(--color-rule-2);
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: border-color .15s var(--ease-out), background .15s var(--ease-out);
-}
-.todo-check:hover { border-color: var(--color-accent); }
-.todo-check:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
-.todo-check.is-done { background: var(--color-accent); border-color: var(--color-accent); }
-.todo-check.is-done::after {
-  content: "";
-  width: 4px; height: 8px;
-  border-right: 1.5px solid var(--color-accent-ink);
-  border-bottom: 1.5px solid var(--color-accent-ink);
-  transform: rotate(45deg) translate(-1px, -1px);
-}
-.todo-text { flex: 1; font-size: var(--text-sm); color: var(--color-ink-2); }
-.todo-text.is-done { color: var(--color-muted); text-decoration: line-through; }
+.kanban-head .count { color: var(--color-ink); font-weight: 600; }
+.kanban-col.is-overdue .kanban-head { color: var(--color-warn); }
+.kanban-card { margin: var(--space-sm); padding: var(--space-sm); border: 1px solid var(--color-rule); border-radius: var(--radius-sm); background: var(--color-paper-2); }
+.kanban-card .todo-text { display: block; font-size: var(--text-sm); color: var(--color-ink-2); margin-bottom: var(--space-xs); }
+.kanban-card.is-done .todo-text { color: var(--color-muted); text-decoration: line-through; }
 .badge {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-rule-2);
-  color: var(--color-muted);
-  flex-shrink: 0;
+  font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.04em;
+  padding: 3px 8px; border-radius: var(--radius-sm); border: 1px solid var(--color-rule-2); color: var(--color-muted);
 }
 
+@media (max-width: 900px) {
+  .week-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kanban { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 640px) {
   .statusbar { flex-direction: column; align-items: flex-start; }
+  .week-grid, .kanban { grid-template-columns: 1fr; }
   .bob-table { display: block; overflow-x: auto; }
+  .tabstrip { gap: var(--space-md); }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
-}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
@@ -341,99 +241,131 @@ a:hover { text-decoration-color: var(--color-accent); }
   </div>
 </div>
 
+<div class="tabstrip" role="tablist" aria-label="Command Center views">
+  <button class="tab" role="tab" id="tab-bob" aria-selected="true" aria-controls="panel-bob">Book of Business</button>
+  <button class="tab" role="tab" id="tab-cal" aria-selected="false" aria-controls="panel-cal" tabindex="-1">Calendar</button>
+  <button class="tab" role="tab" id="tab-todo" aria-selected="false" aria-controls="panel-todo" tabindex="-1">To Dos</button>
+</div>
+
 <div class="shell">
 
-  <div class="kpis">
-    <div class="kpi"><span class="mono-label">Total ARR</span><span class="value tabular">$1.84M</span></div>
-    <div class="kpi"><span class="mono-label">Renewals ≤ 90d</span><span class="value tabular">6</span></div>
-    <div class="kpi"><span class="mono-label">Open risk</span><span class="value tabular">2</span></div>
-    <div class="kpi"><span class="mono-label">Open todos</span><span class="value tabular">5</span></div>
-  </div>
-
-  <section class="panel">
-    <div class="panel-head">
-      <h2>Book of Business</h2>
-      <button class="refresh-btn" type="button">Refresh</button>
+  <section class="tabpanel is-active" id="panel-bob" role="tabpanel" aria-labelledby="tab-bob">
+    <div class="kpis">
+      <div class="kpi"><span class="mono-label">Total ARR</span><span class="value tabular">$1.84M</span></div>
+      <div class="kpi"><span class="mono-label">Renewals ≤ 90d</span><span class="value tabular">6</span></div>
+      <div class="kpi"><span class="mono-label">Open risk</span><span class="value tabular">2</span></div>
+      <div class="kpi"><span class="mono-label">Open todos</span><span class="value tabular">5</span></div>
     </div>
-    <table class="bob-table">
-      <thead>
-        <tr><th>Account</th><th>ARR</th><th>Renewal</th><th>Sentiment</th><th>Risk</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="account-name">Northwind Traders</td>
-          <td class="tabular">$84,200</td>
-          <td class="tabular">Mar 2027</td>
-          <td><span class="chip is-thriving">Thriving</span></td>
-          <td><span class="chip">3. Low</span></td>
-        </tr>
-        <tr>
-          <td class="account-name">Vertex Systems</td>
-          <td class="tabular">$41,900</td>
-          <td class="tabular">Jan 2027</td>
-          <td><span class="chip is-watching">Watching</span></td>
-          <td><span class="chip">2. Med</span></td>
-        </tr>
-        <tr>
-          <td class="account-name">Acme Analytics</td>
-          <td class="tabular">$127,000</td>
-          <td class="tabular">Sep 2026</td>
-          <td><span class="chip is-thriving">Thriving</span></td>
-          <td><span class="chip">4. Stable</span></td>
-        </tr>
-        <tr>
-          <td class="account-name">Solace Robotics</td>
-          <td class="tabular">$63,500</td>
-          <td class="tabular">Nov 2026</td>
-          <td><span class="chip is-thriving">Thriving</span></td>
-          <td><span class="chip">3. Low</span></td>
-        </tr>
-      </tbody>
-    </table>
+    <section class="panel">
+      <div class="panel-head"><h2>Book of Business</h2><button class="refresh-btn" type="button">Refresh</button></div>
+      <table class="bob-table">
+        <thead><tr><th>Account</th><th>ARR</th><th>Renewal</th><th>Sentiment</th><th>Risk</th></tr></thead>
+        <tbody>
+          <tr><td class="account-name">Northwind Traders</td><td class="tabular">$84,200</td><td class="tabular">Mar 2027</td><td><span class="chip is-thriving">Thriving</span></td><td><span class="chip">3. Low</span></td></tr>
+          <tr><td class="account-name">Vertex Systems</td><td class="tabular">$41,900</td><td class="tabular">Jan 2027</td><td><span class="chip is-watching">Watching</span></td><td><span class="chip">2. Med</span></td></tr>
+          <tr><td class="account-name">Acme Analytics</td><td class="tabular">$127,000</td><td class="tabular">Sep 2026</td><td><span class="chip is-thriving">Thriving</span></td><td><span class="chip">4. Stable</span></td></tr>
+          <tr><td class="account-name">Solace Robotics</td><td class="tabular">$63,500</td><td class="tabular">Nov 2026</td><td><span class="chip is-thriving">Thriving</span></td><td><span class="chip">3. Low</span></td></tr>
+        </tbody>
+      </table>
+    </section>
   </section>
 
-  <div class="split">
+  <section class="tabpanel" id="panel-cal" role="tabpanel" aria-labelledby="tab-cal" hidden>
     <section class="panel">
-      <div class="panel-head">
-        <h2>Today</h2>
-        <button class="refresh-btn" type="button">Refresh</button>
-      </div>
-      <div class="meeting-card">
-        <div class="meeting-meta">10:00 AM · Vertex Systems</div>
-        <p class="meeting-brief">Seat utilization dipped to 61% last quarter. Lead with the new reporting workflow before discussing renewal terms.</p>
-        <div class="note-field" tabindex="0">+ add note</div>
-      </div>
-      <div class="meeting-card">
-        <div class="meeting-meta">2:30 PM · Solace Robotics</div>
-        <p class="meeting-brief">Quarterly check-in. No open risk. Confirm expansion interest in the new analytics module.</p>
-        <div class="note-field" tabindex="0">+ add note</div>
+      <div class="panel-head"><h2>This Week</h2><button class="refresh-btn" type="button">Refresh</button></div>
+      <div style="padding: var(--space-md);">
+        <div class="week-grid">
+          <div class="day-col">
+            <div class="day-head"><b>Mon</b> · Sep 1</div>
+            <div class="meeting-card">
+              <div class="meeting-meta">10:00 · Vertex Systems</div>
+              <p class="meeting-brief">Seat utilization dipped to 61%. Lead with the reporting workflow before renewal terms.</p>
+              <div class="note-field" tabindex="0">+ add note</div>
+            </div>
+          </div>
+          <div class="day-col">
+            <div class="day-head"><b>Tue</b> · Sep 2</div>
+            <div class="day-empty">No meetings scheduled</div>
+          </div>
+          <div class="day-col">
+            <div class="day-head"><b>Wed</b> · Sep 3</div>
+            <div class="meeting-card">
+              <div class="meeting-meta">2:30 · Solace Robotics</div>
+              <p class="meeting-brief">Quarterly check-in. No open risk. Confirm expansion interest in the analytics module.</p>
+              <div class="note-field" tabindex="0">+ add note</div>
+            </div>
+          </div>
+          <div class="day-col">
+            <div class="day-head"><b>Thu</b> · Sep 4</div>
+            <div class="day-empty">No meetings scheduled</div>
+          </div>
+          <div class="day-col">
+            <div class="day-head"><b>Fri</b> · Sep 5</div>
+            <div class="meeting-card">
+              <div class="meeting-meta">11:00 · Acme Analytics</div>
+              <p class="meeting-brief">EBR prep. Sentiment thriving — use the slot to scope expansion pipeline.</p>
+              <div class="note-field" tabindex="0">+ add note</div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
+  </section>
 
+  <section class="tabpanel" id="panel-todo" role="tabpanel" aria-labelledby="tab-todo" hidden>
     <section class="panel">
-      <div class="panel-head">
-        <h2>Todos</h2>
-        <button class="refresh-btn" type="button">Refresh</button>
-      </div>
-      <div class="todo-row">
-        <span class="todo-check" tabindex="0" role="checkbox" aria-checked="false"></span>
-        <span class="todo-text">Send Vertex Systems the Q3 utilization report</span>
-        <span class="badge">risk</span>
-      </div>
-      <div class="todo-row">
-        <span class="todo-check is-done" tabindex="0" role="checkbox" aria-checked="true"></span>
-        <span class="todo-text is-done">Follow up on Acme Analytics expansion pipeline</span>
-        <span class="badge">exp</span>
-      </div>
-      <div class="todo-row">
-        <span class="todo-check" tabindex="0" role="checkbox" aria-checked="false"></span>
-        <span class="todo-text">Reply to Solace Robotics' Slack thread on module pricing</span>
-        <span class="badge">follow</span>
+      <div class="panel-head"><h2>To Dos</h2><button class="refresh-btn" type="button">Refresh</button></div>
+      <div style="padding: var(--space-md);">
+        <div class="kanban">
+          <div class="kanban-col is-overdue">
+            <div class="kanban-head">Overdue <span class="count">1</span></div>
+            <div class="kanban-card"><span class="todo-text">Reply to Solace Robotics' Slack thread on module pricing</span><span class="badge">follow</span></div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-head">Today <span class="count">1</span></div>
+            <div class="kanban-card"><span class="todo-text">Send Vertex Systems the Q3 utilization report</span><span class="badge">risk</span></div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-head">This Week <span class="count">1</span></div>
+            <div class="kanban-card"><span class="todo-text">Scope Acme Analytics expansion pipeline before EBR</span><span class="badge">exp</span></div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-head">Done <span class="count">1</span></div>
+            <div class="kanban-card is-done"><span class="todo-text">Follow up on Acme Analytics expansion pipeline</span><span class="badge">exp</span></div>
+          </div>
+        </div>
       </div>
     </section>
-  </div>
+  </section>
 
 </div>
+
+<script>
+(function () {
+  var tabs = document.querySelectorAll('.tab');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      tabs.forEach(function (t) {
+        t.setAttribute('aria-selected', 'false');
+        t.tabIndex = -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = true;
+        document.getElementById(t.getAttribute('aria-controls')).classList.remove('is-active');
+      });
+      tab.setAttribute('aria-selected', 'true');
+      tab.tabIndex = 0;
+      var panel = document.getElementById(tab.getAttribute('aria-controls'));
+      panel.hidden = false;
+      panel.classList.add('is-active');
+    });
+    tab.addEventListener('keydown', function (e) {
+      var list = Array.prototype.slice.call(tabs);
+      var i = list.indexOf(tab);
+      if (e.key === 'ArrowRight') { e.preventDefault(); list[(i + 1) % list.length].focus(); list[(i + 1) % list.length].click(); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); list[(i - 1 + list.length) % list.length].focus(); list[(i - 1 + list.length) % list.length].click(); }
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
