@@ -25,8 +25,9 @@ separate news/leadership-change digest and is not touched by this task.
      lock (crons never wait).
    - Set `syncLocks.bob` to now, read the artifact's current state.
    - Match each Salesforce account to an existing `accounts[]` entry by
-     `sfdcId` (already a stable identifier from the T1 migration — no fuzzy
-     matching needed here, unlike meeting-prep/eod-todo).
+     `sfdcId` — a stable Salesforce identifier, so no fuzzy matching is
+     needed here, unlike meeting-prep/eod-todo which resolve free-text
+     account names.
    - Replace only the Salesforce-owned fields on each matched account. Leave
      `overrides`, `meetings`, `tasks`, and `archived` completely untouched.
    - Publish, clear `syncLocks.bob`, set `lastSynced.salesforce` to now.

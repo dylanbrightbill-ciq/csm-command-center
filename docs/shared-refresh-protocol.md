@@ -45,7 +45,7 @@ import re
 
 ALIASES = {
     # normalized nickname -> canonical account name, add entries as discovered
-    "coreweave": "Weights and Biases",
+    "acme": "Acme Corporation",  # example — replace with your own real nicknames as discovered
 }
 
 def normalize(s):

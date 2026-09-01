@@ -42,8 +42,8 @@ Step 6 — push tasks into the Command Center artifact:
 a. Parse your step-2 output into task objects. For each bullet point, capture:
    - `"id"`: prefix `"eod-MMDD-"` + a 3-digit counter (e.g. `"eod-0901-001"`)
    - `"text"`: the task description (without account prefix)
-   - `"accountName"`: account name if present before a colon (e.g. "Cyera"
-     from "Cyera: send follow-up"), otherwise null — resolved to a real
+   - `"accountName"`: account name if present before a colon (e.g. "Acme"
+     from "Acme: send follow-up"), otherwise null — resolved to a real
      `accountId` in step (c) below using the shared fuzzy matcher, then
      discarded
    - `"badge"`: auto-assign — `"risk"` if text mentions churn/risk/escalation/
