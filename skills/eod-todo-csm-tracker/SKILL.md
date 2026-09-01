@@ -111,7 +111,7 @@ rather than publishing a no-op update.
 
 Context:
 - {{CSM_NAME}} manages enterprise accounts (2,000+ employees) on CaptivateIQ, an incentive compensation platform.
-- He is measured on NRR (net revenue retention) — surface anything tied to renewal risk or expansion.
+- {{CSM_NAME}} is measured on NRR (net revenue retention) — surface anything tied to renewal risk or expansion.
 - Tone: friendly, concise, high signal.
 - No em dashes; use short paragraphs and clear next actions.
 - Next-day meeting prep is handled by a separate morning-meeting-prep scheduled task; never duplicate that here.

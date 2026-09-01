@@ -43,7 +43,7 @@ separate news/leadership-change digest and is not touched by this task.
 ## Context
 
 - {{CSM_NAME}} manages enterprise accounts (2,000+ employees) on CaptivateIQ.
-- He is measured on NRR — surface anything tied to renewal risk or expansion,
+- {{CSM_NAME}} is measured on NRR — surface anything tied to renewal risk or expansion,
   but this skill's job is the sync itself, not analysis or commentary.
-- No em dashes; short paragraphs, clear next actions if anything needs his
+- No em dashes; short paragraphs, clear next actions if anything needs
   attention (e.g. a brand-new account with no CSM judgment fields yet).
