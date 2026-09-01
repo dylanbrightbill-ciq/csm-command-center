@@ -3,15 +3,15 @@ name: bob-sfdc-sync
 description: Refresh core Salesforce fields into the CSM Command Center's Book of Business tab, Mon/Wed/Fri 5am EST + on-demand
 ---
 
-Refresh the Salesforce-owned account fields in Dylan Brightbill's CSM Command
-Center artifact ("Command Center", https://claude.ai/code/artifact/ee70267c-1131-41e6-af8d-41a3ec95a649).
+Refresh the Salesforce-owned account fields in {{CSM_NAME}}'s CSM Command
+Center artifact ("Command Center", {{ARTIFACT_URL}}).
 
 This is distinct from `bob-customer-intel-digest` — that skill produces a
 separate news/leadership-change digest and is not touched by this task.
 
 ## Steps
 
-1. Pull Dylan's active Salesforce accounts (`CSM__r.Name = 'Dylan Brightbill'`)
+1. Pull {{CSM_NAME}}'s active Salesforce accounts (`CSM__r.Name = '{{SFDC_CSM_FILTER}}'`)
    with their current values for: ARR (active subscription), ARR (sum of
    amount), renewal date, meeting cadence, churn score, risk records, expansion
    pipeline / open opportunities, active processing status, implementation
@@ -19,7 +19,7 @@ separate news/leadership-change digest and is not touched by this task.
    processing frequency, previous tool, seats occupied, payees purchased, seat
    utilization, instance seat count, private/public, industry.
 
-2. Follow `/Users/dylan.brightbill/Documents/Claude/csm-command-center/docs/shared-refresh-protocol.md` in the `csm-command-center` repo
+2. Follow `{{REPO_PATH}}/docs/shared-refresh-protocol.md` in the `csm-command-center` repo
    exactly for the publish step:
    - Check `syncLocks.bob` — this is a cron run, so proceed regardless of the
      lock (crons never wait).
@@ -37,11 +37,11 @@ separate news/leadership-change digest and is not touched by this task.
 4. If a new Salesforce account exists that isn't in `accounts[]` yet, add it
    with these Salesforce-owned fields populated and every CSM-judgment field
    (`csmSentiment`, `risk`, `notes`, `capResearchStatus`, `ciqExecutiveSponsor`,
-   `lastEbr`) null — Dylan fills those in by hand.
+   `lastEbr`) null — {{CSM_NAME}} fills those in by hand.
 
 ## Context
 
-- Dylan manages enterprise accounts (2,000+ employees) on CaptivateIQ.
+- {{CSM_NAME}} manages enterprise accounts (2,000+ employees) on CaptivateIQ.
 - He is measured on NRR — surface anything tied to renewal risk or expansion,
   but this skill's job is the sync itself, not analysis or commentary.
 - No em dashes; short paragraphs, clear next actions if anything needs his

@@ -1,0 +1,14 @@
+{
+  "accounts": [],
+  "overrides": {},
+  "meetings": {},
+  "tasks": [],
+  "archived": [],
+  "customTypes": [],
+  "layout": null,
+  "kpiVisible": null,
+  "columnSort": {},
+  "columnWidths": {},
+  "lastSynced": {"salesforce": null, "meetings": null, "eodTodo": null},
+  "syncLocks": {"bob": null, "meetings": null, "todos": null}
+}

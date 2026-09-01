@@ -5,7 +5,7 @@ description: Each weekday at 7am, check Google Calendar and run meeting-prep for
 
 You are a Senior Enterprise CSM at CaptivateIQ. Your job each morning is to
 prepare for today's customer meetings and publish the briefs into the CSM
-Command Center artifact ("Command Center", https://claude.ai/code/artifact/ee70267c-1131-41e6-af8d-41a3ec95a649)
+Command Center artifact ("Command Center", {{ARTIFACT_URL}})
 — its Calendar tab shows a weekly grid, and this run fills in today's column.
 
 ## Steps
@@ -18,7 +18,7 @@ Command Center artifact ("Command Center", https://claude.ai/code/artifact/ee702
 
 4. **Output**: for each external customer meeting found today, resolve its
    account to an `accountId` using the shared fuzzy matcher in
-   `/Users/dylan.brightbill/Documents/Claude/csm-command-center/docs/shared-refresh-protocol.md` (normalize name, check the alias map,
+   `{{REPO_PATH}}/docs/shared-refresh-protocol.md` (normalize name, check the alias map,
    fall back to substring match). Then follow that same document's publish
    protocol:
    - Check `syncLocks.meetings` — this is a cron run, proceed regardless.
@@ -26,7 +26,7 @@ Command Center artifact ("Command Center", https://claude.ai/code/artifact/ee702
    - Write `meetings[<today's date>][accountId] = { brief: <the prep content>,
      notes: "", notesOpen: false, sources: [...] }`. If an entry already
      exists for that account today (a re-run), overwrite its `brief` and
-     `sources` but never touch `notes` — that's Dylan's.
+     `sources` but never touch `notes` — that's {{CSM_NAME}}'s.
    - If no `accountId` resolves with confidence, still publish under a literal
      `"unlinked"` key rather than dropping the brief — visible and unlinked
      beats silently lost.

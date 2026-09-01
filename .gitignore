@@ -1,2 +1,3 @@
 # real customer data — stays local, never committed
 /data/
+/build/

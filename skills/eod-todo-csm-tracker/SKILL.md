@@ -3,9 +3,9 @@ name: eod-todo-csm-tracker
 description: Run EOD to-do skill at 3:30pm weekdays and push new tasks into the CSM Command Center artifact's To Dos tab
 ---
 
-Run the end-of-day to-do skill for Dylan Brightbill, Senior Enterprise CSM at
+Run the end-of-day to-do skill for {{CSM_NAME}}, Senior Enterprise CSM at
 CaptivateIQ, then push its output into the CSM Command Center artifact
-("Command Center", https://claude.ai/code/artifact/ee70267c-1131-41e6-af8d-41a3ec95a649)
+("Command Center", {{ARTIFACT_URL}})
 — its To Dos tab renders these as a Kanban board (Overdue / Today / This
 Week / Done), computed automatically from each task's `dueDate` and `done`
 fields, so nothing here needs to know about the board layout itself.
@@ -70,7 +70,7 @@ c. Parse its embedded `<script type="application/json" id="seed-data">` block
    `archived`, `customTypes`, `layout`, `kpiVisible`, `columnSort`,
    `columnWidths`, `lastSynced`, `syncLocks`. For each new task, resolve
    `accountId` using the shared fuzzy matcher in
-   `/Users/dylan.brightbill/Documents/Claude/csm-command-center/docs/shared-refresh-protocol.md` (normalize, alias map, substring
+   `{{REPO_PATH}}/docs/shared-refresh-protocol.md` (normalize, alias map, substring
    fallback) against `accounts[].accountName`; set `accountId: null` if
    nothing resolves with confidence — never guess. Drop `accountName` from
    the final object — only `accountId` is stored.
@@ -84,7 +84,7 @@ d. Build the `seen` Set from BOTH `tasks[]` and `archived[]` ids (unchanged,
    Only tasks whose id is not already in `seen` get appended to `tasks[]`.
    Never resurrect anything from `archived[]`.
 
-e. Follow `/Users/dylan.brightbill/Documents/Claude/csm-command-center/docs/shared-refresh-protocol.md`'s lock protocol before publishing:
+e. Follow `{{REPO_PATH}}/docs/shared-refresh-protocol.md`'s lock protocol before publishing:
    check `syncLocks.todos` — this is a cron run, proceed regardless of the
    lock. Set `syncLocks.todos` to now, read the artifact's current state
    again (it may have changed since step b), do the merge in (d), publish,
@@ -110,7 +110,7 @@ tasks worth adding (nothing came out of today), skip steps (d)-(h) entirely
 rather than publishing a no-op update.
 
 Context:
-- Dylan manages enterprise accounts (2,000+ employees) on CaptivateIQ, an incentive compensation platform.
+- {{CSM_NAME}} manages enterprise accounts (2,000+ employees) on CaptivateIQ, an incentive compensation platform.
 - He is measured on NRR (net revenue retention) — surface anything tied to renewal risk or expansion.
 - Tone: friendly, concise, high signal.
 - No em dashes; use short paragraphs and clear next actions.
