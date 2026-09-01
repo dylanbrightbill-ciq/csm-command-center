@@ -19,7 +19,7 @@ separate news/leadership-change digest and is not touched by this task.
    processing frequency, previous tool, seats occupied, payees purchased, seat
    utilization, instance seat count, private/public, industry.
 
-2. Follow `docs/shared-refresh-protocol.md` in the `csm-command-center` repo
+2. Follow `/Users/dylan.brightbill/Documents/Claude/csm-command-center/docs/shared-refresh-protocol.md` in the `csm-command-center` repo
    exactly for the publish step:
    - Check `syncLocks.bob` — this is a cron run, so proceed regardless of the
      lock (crons never wait).

@@ -70,7 +70,7 @@ c. Parse its embedded `<script type="application/json" id="seed-data">` block
    `archived`, `customTypes`, `layout`, `kpiVisible`, `columnSort`,
    `columnWidths`, `lastSynced`, `syncLocks`. For each new task, resolve
    `accountId` using the shared fuzzy matcher in
-   `docs/shared-refresh-protocol.md` (normalize, alias map, substring
+   `/Users/dylan.brightbill/Documents/Claude/csm-command-center/docs/shared-refresh-protocol.md` (normalize, alias map, substring
    fallback) against `accounts[].accountName`; set `accountId: null` if
    nothing resolves with confidence — never guess. Drop `accountName` from
    the final object — only `accountId` is stored.
@@ -84,7 +84,7 @@ d. Build the `seen` Set from BOTH `tasks[]` and `archived[]` ids (unchanged,
    Only tasks whose id is not already in `seen` get appended to `tasks[]`.
    Never resurrect anything from `archived[]`.
 
-e. Follow `docs/shared-refresh-protocol.md`'s lock protocol before publishing:
+e. Follow `/Users/dylan.brightbill/Documents/Claude/csm-command-center/docs/shared-refresh-protocol.md`'s lock protocol before publishing:
    check `syncLocks.todos` — this is a cron run, proceed regardless of the
    lock. Set `syncLocks.todos` to now, read the artifact's current state
    again (it may have changed since step b), do the merge in (d), publish,

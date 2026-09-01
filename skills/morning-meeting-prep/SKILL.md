@@ -18,7 +18,7 @@ Command Center artifact ("Command Center", https://claude.ai/code/artifact/ee702
 
 4. **Output**: for each external customer meeting found today, resolve its
    account to an `accountId` using the shared fuzzy matcher in
-   `docs/shared-refresh-protocol.md` (normalize name, check the alias map,
+   `/Users/dylan.brightbill/Documents/Claude/csm-command-center/docs/shared-refresh-protocol.md` (normalize name, check the alias map,
    fall back to substring match). Then follow that same document's publish
    protocol:
    - Check `syncLocks.meetings` — this is a cron run, proceed regardless.
