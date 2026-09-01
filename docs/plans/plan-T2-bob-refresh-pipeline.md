@@ -2,7 +2,7 @@
 
 ## Context
 
-The Book of Business panel needs a way to keep its Salesforce-owned fields
+The Book of Business tab needs a way to keep its Salesforce-owned fields
 (ARR, renewal date, seats, support level, pipeline, risk records, and so on)
 current, now that CSM Tracker's old live-in-browser sync is being removed and
 the weekly intel digest skill is staying fully separate. This ticket builds a
@@ -14,15 +14,15 @@ through T1's shared protocol, on a schedule plus on demand.
 ## Tangible Changes
 
 - A new scheduled task runs Monday, Wednesday, and Friday at 5am EST, refreshing
-  every account's Salesforce-owned fields in the Book of Business panel.
+  every account's Salesforce-owned fields in the Book of Business tab.
 - Dylan can also trigger the same refresh by asking in chat, or by clicking the
-  Book of Business panel's refresh button.
+  Book of Business tab's refresh button.
 - Manually-entered fields (CSM Sentiment, Risk, Notes, Cap Research Status, CIQ
   Executive Sponsor, Last EBR) are never touched by this refresh, on any
   trigger path.
 - No change to the weekly intel digest skill — it keeps running exactly as it
   does today, fully independent of this pipeline.
-- No change to the Today or Todos panels.
+- No change to the Calendar or To Dos tabs.
 
 ## Implementation Map
 
@@ -30,7 +30,7 @@ through T1's shared protocol, on a schedule plus on demand.
   same shape as the existing `eod-todo-csm-tracker` and
   `bob-customer-intel-digest-weekly` scheduled tasks, but pulling core account
   fields instead of news signals.
-- **Artifact wiring:** a refresh button on the Book of Business panel, using
+- **Artifact wiring:** a refresh button on the Book of Business tab, using
   the runtime capability that lets the page ask Claude a question directly.
 
 ## Code Changes
@@ -45,7 +45,7 @@ T1's shared protocol instead of producing a chat-only digest:
 ```markdown
 ---
 name: bob-sfdc-sync
-description: Refresh core Salesforce fields into the CSM Command Center's Book of Business panel, Mon/Wed/Fri 5am EST + on-demand
+description: Refresh core Salesforce fields into the CSM Command Center's Book of Business tab, Mon/Wed/Fri 5am EST + on-demand
 ---
 
 Pull Dylan's active Salesforce accounts (CSM__r.Name = 'Dylan Brightbill') —
@@ -78,12 +78,12 @@ before this skill's first real run.
 ### Artifact wiring
 
 **`src/artifact/command-center.html`** — add a refresh button to the Book of
-Business panel header. On click, it should ask Claude to run the bob-sfdc-sync
+Business tab header. On click, it should ask Claude to run the bob-sfdc-sync
 skill, using the runtime's ask-Claude capability.
 
 ⚠️ Shortcut risk: this button depends on a runtime capability whose
 availability on Dylan's account is still unconfirmed (open question from the
-spec). Alternative if unavailable: ship the panel without the button for now,
+spec). Alternative if unavailable: ship the tab without the button for now,
 and rely on the cron plus "ask in chat" as the only two trigger paths — this
 does not block the rest of the ticket, since the skill and its cron/chat paths
 work independently of the button.
@@ -97,7 +97,7 @@ work independently of the button.
 | File | Change |
 |------|--------|
 | `skills/bob-sfdc-sync/SKILL.md` | New. Scheduled-task skill, Mon/Wed/Fri 5am EST. |
-| `src/artifact/command-center.html` | Add Book of Business panel refresh button. |
+| `src/artifact/command-center.html` | Add Book of Business tab refresh button. |
 
 ## Verification
 
