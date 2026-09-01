@@ -13,16 +13,19 @@ case-insensitive-substring account matching with the shared fuzzy matcher.
 
 ## Tangible Changes
 
-- The Todos panel keeps working exactly as it does today in CSM Tracker: a
-  prioritized list, generated at 3:30pm weekdays, merged in without ever
-  duplicating or resurrecting an archived task.
-- Todos can now reference things that came up in today's meeting notes (from
-  the Today panel), not just calendar/email/Slack/Salesforce activity.
+- Todos generated at 3:30pm weekdays merge into the same task list CSM
+  Tracker already maintains, without ever duplicating or resurrecting an
+  archived task — that merge logic is unchanged. The **To Dos tab's Kanban
+  board** (Overdue / Today / This Week / Done, built in T1) reads `dueDate`
+  and `done` directly, so every task this ticket produces slots into the
+  right column automatically — no board-specific output format needed here.
+- Todos can now reference things that came up in this week's meeting notes
+  (from the Calendar tab), not just calendar/email/Slack/Salesforce activity.
 - Account matching gets more reliable — abbreviations, "Inc"/"Inc." suffix
   differences, and minor misspellings that used to fail the old
   substring-only match now resolve correctly, using the same matcher T3 uses.
 - Dylan can also trigger a fresh todo run by asking in chat, or by clicking
-  the Todos panel's refresh button.
+  the To Dos tab's refresh button.
 - No change to the urgency buckets, badge logic, or the rule that meeting prep
   is out of scope for this list (that stays morning-meeting-prep's job).
 
@@ -80,7 +83,7 @@ skill.
 
 ## Verification
 
-1. Run on a day where the Today panel has at least one meeting with notes.
+1. Run on a day where the Calendar tab has at least one meeting with notes.
    Confirm the generated todos reference something from those notes, not just
    calendar/email/Slack/Salesforce activity.
 2. Run twice in a row for the same day with no new activity. Confirm the

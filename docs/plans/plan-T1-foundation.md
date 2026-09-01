@@ -24,9 +24,15 @@ task from CSM Tracker, correctly migrated.
   today.
 - No change yet to CSM Tracker itself — it stays live and untouched as the
   rollback target.
-- No Today panel yet, and no live refresh pipeline yet — both come in T2/T3/T4.
-  This ticket ships the empty shell (`meetings: {}`, `syncLocks: {bob: null,
-  meetings: null, todos: null}`) that those tickets fill in.
+- The artifact shows the new 3-tab shell (Book of Business / Calendar / To
+  Dos), using the visual design in
+  [docs/design/command-center-mockup.html](../design/command-center-mockup.html)
+  and [tokens.css](../design/tokens.css) — a custom theme, not CSM Tracker's
+  look. Book of Business tab is populated; Calendar and To Dos tabs render
+  their empty states (no meetings yet, no Kanban cards yet) until T3/T4 land.
+- No live refresh pipeline yet — that comes in T2/T3/T4. This ticket ships the
+  empty shell (`meetings: {}`, `syncLocks: {bob: null, meetings: null, todos:
+  null}`) that those tickets fill in.
 
 ## Implementation Map
 
@@ -36,10 +42,12 @@ task from CSM Tracker, correctly migrated.
 - **Shared protocol doc:** a new reference document describing the read-merge-
   write cycle, the sync-lock check, and the account-name matcher, written so
   T2/T3/T4 can each follow it without re-deriving the algorithm.
-- **Artifact source:** the new artifact's initial HTML/JS, seeded from the
-  migration script's output, with the three-panel shell (Today panel empty
-  until T3) and the KPI/layout/column customization carried forward from CSM
-  Tracker's proven UI.
+- **Artifact source:** the new artifact's initial HTML/JS, built from the
+  visual design mockup (tab strip + status bar + Book of Business tab
+  populated from the migration output; Calendar and To Dos tabs present but
+  empty), using `tokens.css`'s custom theme. KPI row and column customization
+  are new to this design pass — not carried forward from CSM Tracker's old
+  UI, which this project is explicitly moving away from.
 
 ## Code Changes
 
@@ -110,12 +118,13 @@ copies drifting apart.
 
 ### Artifact source
 
-**`src/artifact/command-center.html`** — new file. Three-panel shell (Book of
-Business populated, Today empty pending T3, Todos populated from migrated
-tasks). Seed-data script tag holds the new schema. Carries forward CSM
-Tracker's existing customizable column-layout, KPI toggles, and column
-sort/width UI as-is — this ticket does not redesign that UI, only the schema
-underneath it.
+**`src/artifact/command-center.html`** — new file. Implements the 3-tab shell
+from the visual design (status bar, tab strip, Book of Business / Calendar /
+To Dos tabs) using `tokens.css`'s custom theme. Book of Business tab
+populated from migration output (KPI row + table); Calendar tab renders its
+weekly-grid empty state pending T3; To Dos tab renders its Kanban empty state
+pending T4. Seed-data script tag holds the new schema. This is a from-scratch
+visual build per the design pass, not a port of CSM Tracker's old UI.
 
 ```html
 <script type="application/json" id="seed-data">

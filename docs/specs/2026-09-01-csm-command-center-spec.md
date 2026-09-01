@@ -44,11 +44,11 @@ works, in particular the proven task-merge logic, and fixes what does not.
 
 **Use case 1: Monday morning check-in**
 1. Dylan opens the Command Center artifact at his desk.
-2. He sees the Book of Business panel, refreshed earlier that morning (or, worst
+2. He sees the Book of Business tab, refreshed earlier that morning (or, worst
    case, two days prior) by the Monday/Wednesday/Friday 5am sync. Renewal dates,
    ARR, and risk records are current as of the last sync timestamp shown at the
    top of the panel.
-3. He sees the Today panel already populated. A 7am scheduled task ran before he sat
+3. He sees the Calendar tab already populated. A 7am scheduled task ran before he sat
    down and prepared a brief for his 10am call with a customer.
 4. He reads the brief, which includes that account's book-of-business snapshot and
    his notes from the last touchpoint.
@@ -56,8 +56,8 @@ works, in particular the proven task-merge logic, and fixes what does not.
 **Use case 2: End of a busy day**
 1. Dylan finishes a day full of calls and slack threads.
 2. At 3:30pm, a scheduled task reads today's calendar, email, Slack activity, and the
-   notes he left in the Today panel during his meetings.
-3. It writes a short prioritized todo list into the Todos panel. Items already in the
+   notes he left in the Calendar tab during his meetings.
+3. It writes a short prioritized todo list into the To Dos tab. Items already in the
    list, including ones he already checked off, are untouched.
 4. Dylan glances at the new items, adjusts one due date, and moves on.
 
@@ -65,17 +65,20 @@ works, in particular the proven task-merge logic, and fixes what does not.
 1. Dylan just got off a call that changed his read on an account's risk.
 2. He wants an updated brief before his next call with a different account, without
    waiting for the 7am cron.
-3. He clicks the refresh button on the Today panel.
+3. He clicks the refresh button on the Calendar tab.
 4. The panel updates with a fresh brief for his next meeting, without touching the
-   Book of Business or Todos panels.
+   Book of Business or To Dos tabs.
 
 ## Scope
 
-**In scope:** a single new artifact with three panels (Book of Business, Today,
-Todos), a clean account schema, a one-time migration from CSM Tracker, a
+**In scope:** a single new artifact with three tabs (Book of Business, Calendar,
+To Dos), a clean account schema, a one-time migration from CSM Tracker, a
 cron-priority write-locking mechanism, fuzzy account-name matching shared across
-panels, per-panel manual refresh (chat and in-page button), and a rebuilt end-of-day
-todo skill that also reads today's meeting notes.
+tabs, per-tab manual refresh (chat and in-page button), and a rebuilt end-of-day
+todo skill that also reads the current week's meeting notes. Visual design is a
+custom theme extracted from the CaptivateIQ Brand 2.0 deck (see
+[docs/design/](../design/) in this repo) — utilitarian/technical tone, warm cream
+paper, dark navy ink, one accent, hairline structure.
 
 **Out of scope:** a shared or multi-CSM view of this artifact, live in-browser
 Salesforce calls (removed by design, see Technical Design), the weekly account
@@ -147,14 +150,18 @@ The artifact state is one JSON document with these top-level entities.
 - **Entity:** Meeting record (new)
   - **Change:** a map from date to account identifier to a record holding the
     meeting brief text, Dylan's notes, and a note-panel open or closed flag. This
-    entity does not exist in CSM Tracker today.
+    entity does not exist in CSM Tracker today. The Calendar tab reads this as a
+    **weekly grid**, not a single day — one entry per date accumulates as each
+    weekday's 7am cron runs, so by Friday the grid shows the whole week.
   - **Migration concern:** none. Starts empty.
 
 - **Entity:** Task record
   - **Change:** unchanged from CSM Tracker's proven schema: identifier, done flag,
     due date, text, badge, sources, created timestamp, notes, account identifier,
     notes-panel open flag. The merge logic that prevents duplicates and never
-    resurrects an archived task is also unchanged.
+    resurrects an archived task is also unchanged. The To Dos tab presents these
+    as a **Kanban board** (Overdue / Today / This Week / Done), computed entirely
+    from `dueDate` and `done` — no schema change, a display-layer grouping only.
   - **Migration concern:** carry forward open tasks from CSM Tracker as is.
 
 - **Entity:** Sync lock record (new)
@@ -235,7 +242,7 @@ done can start.
 |---|-------|-------------|------------|----------|
 | 1 | Foundation: schema, migration, shared utilities | Define the clean account schema. Write the one-time migration script from CSM Tracker, including the manual-review flag for unmappable fields. Build the shared sync-lock read-merge-write utility and the shared fuzzy account-name matcher. Publish the new artifact with Book of Business and Todos populated from migrated data. Testable when done: the new artifact shows all 42 accounts and every open task, matching CSM Tracker field for field under the new names. | None | M |
 | 2 | Book of Business refresh pipeline | Build a new dedicated bob-sfdc-sync skill (separate from the out-of-scope intel digest) that pulls core Salesforce fields and publishes through the shared read-merge-write utility. Add the Monday/Wednesday/Friday 5am EST cron, the on-demand chat path, and the panel's refresh button. Testable when done: triggering a refresh updates Salesforce-owned fields and leaves every override untouched. | 1 | M |
-| 3 | Today panel and meeting-prep pipeline | Add the `meetings` entity and its panel UI. Wire the meeting-prep skill to publish through the shared utilities, using the fuzzy matcher to resolve accounts. Add the 7am weekday cron, the on-demand chat path, and the panel's refresh button. Testable when done: a real meeting today produces a brief in the panel, linked to the correct account. | 1 | M/L |
+| 3 | Calendar tab and meeting-prep pipeline | Add the `meetings` entity and its weekly-grid UI (Mon–Fri columns, accumulating one day at a time as each morning's cron runs). Wire the meeting-prep skill to publish through the shared utilities, using the fuzzy matcher to resolve accounts. Add the 7am weekday cron, the on-demand chat path, and the tab's refresh button. Testable when done: a real meeting today produces a brief in the correct day's column, linked to the correct account. | 1 | M/L |
 | 4 | Todos rebuild | Rebuild the end-of-day-todo skill to also read today's meeting notes as an input source, alongside calendar, email, Slack, and Salesforce activity. Use the fuzzy matcher for account resolution. Merge into `tasks` through the shared utility. Add the 3:30pm weekday cron, the on-demand chat path, and the panel's refresh button. Testable when done: a day with meeting notes produces todos that reference them, and re-running the same day twice produces no duplicates. | 1, 3 | M |
 
 ### Dependency Graph & Parallelism
@@ -243,7 +250,7 @@ done can start.
 ```
 1 (Foundation)
  ├──> 2 (Book of Business pipeline)          — can run in parallel with 3
- └──> 3 (Today panel + meeting-prep) ──> 4 (Todos rebuild)
+ └──> 3 (Calendar tab + meeting-prep) ──> 4 (Todos rebuild)
 ```
 
 Tickets 2 and 3 can both start as soon as 1 lands. Ticket 4 needs 3 finished first,
@@ -333,11 +340,11 @@ scheduled tasks, then fixes the issue and re-runs the migration when ready.
 | System | Why it's involved |
 |--------|-------------------|
 | CSM Command Center artifact | The new artifact itself: schema, panels, and the read-merge-write and sync-lock utilities that every skill writes through. |
-| New bob-sfdc-sync skill | New dedicated skill for the Book of Business panel's Salesforce-owned fields. Not the intel digest skill, which stays separate and untouched. |
-| Meeting-prep skill (`/meeting-prep`) | Its publish target changes from a standalone document to the new Today panel, and its schedule moves to 7am weekdays. |
+| New bob-sfdc-sync skill | New dedicated skill for the Book of Business tab's Salesforce-owned fields. Not the intel digest skill, which stays separate and untouched. |
+| Meeting-prep skill (`/meeting-prep`) | Its publish target changes from a standalone document to the new Calendar tab, and its schedule moves to 7am weekdays. |
 | End-of-day-todo skill (`/eod-todo`) | Rebuilt to read today's meeting notes as a new input source and to use the shared fuzzy matcher for account resolution. |
 | CSM Tracker artifact (prior) | Source of the one-time migration. Left untouched, serves as the rollback target until cutover is confirmed stable. |
-| Salesforce connector | Source of all account-level data synced into the Book of Business panel. |
+| Salesforce connector | Source of all account-level data synced into the Book of Business tab. |
 | Calendar, Gong, Gmail, Slack connectors | Sources for meeting-prep and end-of-day-todo, unchanged from their current use. |
 
 ---
