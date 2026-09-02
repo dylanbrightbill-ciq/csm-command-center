@@ -69,6 +69,12 @@ a { color: var(--color-accent); }
 .bob-table tbody tr:last-child td { border-bottom: none; }
 .bob-table tbody tr:hover { background: var(--color-paper-2); }
 .account-name { font-weight: 600; color: var(--color-ink); }
+.expand-btn { background: none; border: none; cursor: pointer; color: var(--color-muted); font-size: var(--text-sm); padding: 0; width: 16px; line-height: 1; }
+.expand-btn:hover { color: var(--color-accent); }
+.bob-table tbody tr.detail-row td { white-space: normal; background: var(--color-paper-2); padding: var(--space-md); }
+.detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-sm) var(--space-md); }
+.detail-field { display: flex; flex-direction: column; gap: 2px; }
+.detail-field .value { font-size: var(--text-sm); color: var(--color-ink-2); }
 .chip { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 8px; border-radius: var(--radius-sm); border: 1px solid var(--color-rule-2); color: var(--color-ink-2); }
 .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--color-muted); }
 .chip.is-thriving::before { background: var(--color-good); }
@@ -120,7 +126,11 @@ a { color: var(--color-accent); }
       <div class="panel-head"><h2>Book of Business</h2><button class="refresh-btn" type="button">Refresh</button></div>
       <div class="bob-table-wrap">
         <table class="bob-table">
-          <thead><tr><th>Account</th><th>ARR</th><th>Renewal</th><th>Sentiment</th><th>Risk</th></tr></thead>
+          <thead><tr>
+            <th></th><th>Account</th><th>ARR (Active Sub)</th><th>ARR (Sum)</th><th>Renewal</th>
+            <th>Cadence</th><th>Churn</th><th>Sentiment</th><th>Risk</th><th>Risk Records</th>
+            <th>Expansion</th><th>Active Proc.</th><th>Implementation</th>
+          </tr></thead>
           <tbody id="bob-rows"></tbody>
         </table>
       </div>
@@ -154,6 +164,11 @@ __SEED_DATA__
   function money(n) { return n == null ? '—' : '$' + Math.round(n).toLocaleString('en-US'); }
   function dateStr(s) { if (!s) return '—'; var d = new Date(s + 'T00:00:00'); return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); }
   function sentimentClass(s) { s = (s || '').toLowerCase(); if (s.indexOf('thriv') !== -1) return 'is-thriving'; if (s.indexOf('watch') !== -1 || s.indexOf('declin') !== -1) return 'is-watching'; return ''; }
+  function disp(v) { return (v == null || v === '') ? '—' : esc(v); }
+  function listDisp(v) { if (!v || !v.length) return '—'; return esc(v.map(function (r) { return typeof r === 'string' ? r : (r.name || r.title || JSON.stringify(r)); }).join(', ')); }
+  function boolDisp(v) { if (v === true) return 'Yes'; if (v === false) return 'No'; return disp(v); }
+  function pctDisp(v) { return (v == null || v === '') ? '—' : esc(v) + '%'; }
+  function detailField(label, value) { return '<div class="detail-field"><span class="mono-label">' + esc(label) + '</span><span class="value">' + value + '</span></div>'; }
   function ago(iso) {
     if (!iso) return 'never';
     var mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
@@ -182,15 +197,52 @@ __SEED_DATA__
   // ---- Book of Business table ----
   document.getElementById('bob-rows').innerHTML = accounts
     .slice().sort(function (a, b) { return (a.accountName || '').localeCompare(b.accountName || ''); })
-    .map(function (a) {
-      return '<tr>' +
+    .map(function (a, i) {
+      var rowId = 'bob-detail-' + i;
+      return '<tr class="bob-row">' +
+        '<td><button class="expand-btn" type="button" aria-expanded="false" aria-controls="' + rowId + '">&#9656;</button></td>' +
         '<td class="account-name">' + esc(a.accountName) + '</td>' +
         '<td class="tabular">' + money(a.arrActive) + '</td>' +
+        '<td class="tabular">' + money(a.arrSumOfAmount) + '</td>' +
         '<td class="tabular">' + dateStr(a.renewalDate) + '</td>' +
+        '<td>' + disp(a.meetingCadence) + '</td>' +
+        '<td class="tabular">' + disp(a.churnScore) + '</td>' +
         '<td><span class="chip ' + sentimentClass(a.csmSentiment) + '">' + esc(a.csmSentiment || '—') + '</span></td>' +
         '<td><span class="chip">' + esc(a.risk || '—') + '</span></td>' +
-        '</tr>';
+        '<td>' + listDisp(a.riskRecords) + '</td>' +
+        '<td class="tabular">' + disp(a.expansionPipeline) + '</td>' +
+        '<td>' + boolDisp(a.activeProcessing) + '</td>' +
+        '<td>' + boolDisp(a.implementation) + '</td>' +
+        '</tr>' +
+        '<tr class="detail-row" id="' + rowId + '" hidden><td colspan="13"><div class="detail-grid">' +
+          detailField('Customer Service Start Date', dateStr(a.customerServiceStartDate)) +
+          detailField('Support Level', disp(a.supportLevel)) +
+          detailField('Fiscal Year', disp(a.fiscalYear)) +
+          detailField('Processing Frequency', disp(a.processingFrequency)) +
+          detailField('Previous Tool', disp(a.previousTool)) +
+          detailField('Seats Occupied', disp(a.seatsOccupied)) +
+          detailField('Payees Purchased', disp(a.payeesPurchased)) +
+          detailField('Seat Utilization', pctDisp(a.seatUtilization)) +
+          detailField('Instance Seat Count', disp(a.instanceSeatCount)) +
+          detailField('MSA Price Increase Cap', disp(a.msaPriceIncreaseCap)) +
+          detailField('Cap Research Status', disp(a.capResearchStatus)) +
+          detailField('CIQ Executive Sponsor', disp(a.ciqExecutiveSponsor)) +
+          detailField('Last EBR', dateStr(a.lastEbr)) +
+          detailField('Notes', disp(a.notes)) +
+          detailField('Private/Public', disp(a.privatePublic)) +
+          detailField('Industry', disp(a.industry)) +
+        '</div></td></tr>';
     }).join('');
+
+  document.getElementById('bob-rows').addEventListener('click', function (e) {
+    var btn = e.target.closest('.expand-btn');
+    if (!btn) return;
+    var detail = document.getElementById(btn.getAttribute('aria-controls'));
+    var open = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!open));
+    btn.innerHTML = open ? '&#9656;' : '&#9662;';
+    detail.hidden = open;
+  });
 
   // ---- Calendar: current work week, Mon-Fri ----
   var byAccountId = {};
