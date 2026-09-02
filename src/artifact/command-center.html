@@ -390,8 +390,33 @@ var DOC_TEMPLATE_SRC = "__DOC_TEMPLATE_SRC__";
   function saveLayout() { try { localStorage.setItem(LS_LAYOUT, JSON.stringify(layout)); } catch (e) {} }
   var layout = loadLayout();
 
-  var sortState = { key: null, dir: 1 };
-  var expandedRows = {};
+  // Sort/filter/expanded-row state, per-viewer only (not shared artifact data) — but unlike
+  // the old tracker this one gets wiped a LOT: every inline edit publishes straight to the
+  // artifact, and a successful publish reloads the page. Without this, editing one cell
+  // would silently reset whatever view you had set up. Same load/save shape as layout above.
+  var LS_VIEW = 'cc_bob_view_v1';
+  function loadView() { try { return JSON.parse(localStorage.getItem(LS_VIEW)) || {}; } catch (e) { return {}; } }
+  function saveView() {
+    var f = {
+      q: document.getElementById('bobSearch').value,
+      risk: document.getElementById('bobFilterRisk').value,
+      sentiment: document.getElementById('bobFilterSentiment').value,
+      openRisk: document.getElementById('bobFilterOpenRisk').checked,
+      activeImpl: document.getElementById('bobFilterActiveImpl').checked
+    };
+    try { localStorage.setItem(LS_VIEW, JSON.stringify({ sort: sortState, expanded: expandedRows, filters: f })); } catch (e) {}
+  }
+  var savedView = loadView();
+  var sortState = savedView.sort || { key: null, dir: 1 };
+  var expandedRows = savedView.expanded || {};
+  function restoreFilterInputs() {
+    var f = savedView.filters || {};
+    document.getElementById('bobSearch').value = f.q || '';
+    document.getElementById('bobFilterRisk').value = f.risk || '';
+    document.getElementById('bobFilterSentiment').value = f.sentiment || '';
+    document.getElementById('bobFilterOpenRisk').checked = !!f.openRisk;
+    document.getElementById('bobFilterActiveImpl').checked = !!f.activeImpl;
+  }
 
   function getFilteredSorted() {
     var q = (document.getElementById('bobSearch').value || '').trim().toLowerCase();
@@ -481,6 +506,7 @@ var DOC_TEMPLATE_SRC = "__DOC_TEMPLATE_SRC__";
     document.getElementById('bobResultCount').textContent = list.length + ' of ' + accounts.length + ' accounts';
     attachBobHeadHandlers();
     attachBobRowHandlers();
+    saveView();
   }
 
   function attachBobHeadHandlers() {
@@ -712,6 +738,7 @@ var DOC_TEMPLATE_SRC = "__DOC_TEMPLATE_SRC__";
   }
 
   populateFilterOptions();
+  restoreFilterInputs();
   renderBob();
 
   // ---- Calendar: current work week, Mon-Fri ----
