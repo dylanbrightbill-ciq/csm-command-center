@@ -14,9 +14,10 @@ separate news/leadership-change digest and is not touched by this task.
    with their current values for: ARR (active subscription), ARR (sum of
    amount), renewal date, meeting cadence, churn score, risk records, expansion
    pipeline / open opportunities, active processing status, implementation
-   projects, customer service start date, support level, fiscal year,
-   processing frequency, previous tool, seats occupied, payees purchased, seat
-   utilization, instance seat count, private/public, industry.
+   status, implementation owner, implementation projects, customer service
+   start date, support level, fiscal year, processing frequency, previous
+   tool, seats occupied, payees purchased, seat utilization, instance seat
+   count, private/public, industry.
 
 2. Follow this publish protocol exactly:
    - Check `syncLocks.bob` — this is a cron run, so proceed regardless of the
@@ -36,9 +37,12 @@ separate news/leadership-change digest and is not touched by this task.
    no-op version.
 
 4. If a new Salesforce account exists that isn't in `accounts[]` yet, add it
-   with these Salesforce-owned fields populated and every CSM-judgment field
+   with these Salesforce-owned fields populated and every manual field
    (`csmSentiment`, `risk`, `notes`, `capResearchStatus`, `ciqExecutiveSponsor`,
-   `lastEbr`) null — {{CSM_NAME}} fills those in by hand.
+   `lastEbr`, `msaPriceIncreaseCap`) null — {{CSM_NAME}} fills those in by
+   hand. Never overwrite any of those seven fields on an existing account
+   either, even if Salesforce has something in a similarly-named field —
+   they're {{CSM_NAME}}'s judgment calls, not synced data.
 
 ## Context
 

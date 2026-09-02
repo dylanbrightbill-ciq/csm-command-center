@@ -6,7 +6,7 @@ different top-level slice of the state and must never touch another's.
 
 | Skill | Owns | Never touches |
 |---|---|---|
-| `bob-sfdc-sync` | `accounts` (SFDC-owned fields only), `lastSynced.salesforce` | `overrides`, `meetings`, `tasks`, `archived` |
+| `bob-sfdc-sync` | `accounts` (SFDC-owned fields only — everything except the 7 manual fields below), `lastSynced.salesforce` | `overrides`, `meetings`, `tasks`, `archived`, and on `accounts`: `csmSentiment`, `risk`, `notes`, `capResearchStatus`, `ciqExecutiveSponsor`, `lastEbr`, `msaPriceIncreaseCap` — the CSM's manual judgment calls, never synced |
 | `morning-meeting-prep` | `meetings[date][accountId]`, `lastSynced.meetings` | `accounts`, `overrides`, `tasks`, `archived` |
 | `eod-todo-csm-tracker` | `tasks` (append-only), `lastSynced.eodTodo` | `accounts`, `overrides`, `meetings` |
 
