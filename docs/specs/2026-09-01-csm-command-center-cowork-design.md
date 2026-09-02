@@ -28,10 +28,16 @@ flow:
 - The GitHub MCP connector (API/repo operations) is unreliable — confirmed
   failing to connect in at least one CoWork session (auth server issue),
   independent of repo visibility.
-- Plain `WebFetch` of `raw.githubusercontent.com` **is** confirmed reachable
-  from a CoWork session, unauthenticated, with no proxy/allowlist block —
-  verified directly by fetching a live file. This is the one dependency the
-  design below relies on.
+- Plain HTTPS to `raw.githubusercontent.com` **is** confirmed reachable from
+  a CoWork session, unauthenticated, with no proxy/allowlist block. The
+  fetch mechanism is `curl` via Bash, not the `WebFetch` tool — the Task 5
+  dry run found `WebFetch` summarizes large files (it returned a
+  description of `command-center.html` instead of its raw bytes) rather
+  than returning them verbatim, which would silently corrupt the seeded
+  artifact for any CSM who followed a WebFetch-based onboarding message
+  literally. `curl` was verified byte-for-byte against the committed files
+  before adopting it. This is the one dependency the design below relies
+  on.
 
 This document defines a `cowork`-branch-only variant that gets a CSM to
 the same end state (a personal Command Center artifact plus three
@@ -64,13 +70,13 @@ stay private.
 ### Architecture
 
 ```
-raw.githubusercontent.com/.../cowork/skills/*.md  ──WebFetch──┐
-                                                                 ├──> Claude resolves {{TOKENS}} inline
-CSM's pasted setup message (name; URL/filter only if re-running)┘         │
-                                                                          ▼
-                                                    Artifact tool (publish dashboard)
-                                                          │
-                                                          ▼
+raw.githubusercontent.com/.../cowork/skills/*.md  ──curl (Bash)──┐
+                                                                    ├──> Claude resolves {{TOKENS}} inline
+CSM's pasted setup message (name; URL/filter only if re-running) ──┘         │
+                                                                             ▼
+                                                       Artifact tool (publish dashboard)
+                                                             │
+                                                             ▼
                                         3x scheduled tasks, each created with the
                                         fully-resolved skill text as its prompt body
                                         (bob-sfdc-sync, morning-meeting-prep, eod-todo)
@@ -105,10 +111,10 @@ given the rarity of that event at this scale.
 1. Parse the CSM's full name from the pasted message (required). Parse an
    existing artifact URL / SFDC filter only if they are re-running setup,
    not a fresh install.
-2. `WebFetch` the three raw skill templates from the `cowork` branch, plus
-   `src/artifact/command-center.html` and `scripts/empty-seed.json` (both
-   already present on `cowork`, inherited from `main` at the branch point —
-   no need to recreate them).
+2. `curl` (via Bash) the three raw skill templates from the `cowork` branch,
+   plus `src/artifact/command-center.html` and `scripts/empty-seed.json`
+   (both already present on `cowork`, inherited from `main` at the branch
+   point — no need to recreate them). Not `WebFetch` — see Context above.
 3. Substitute `{{TOKENS}}` inline on the fetched text — plain string
    replacement on content already in context; no script invocation.
 4. Publish the seeded HTML as an Artifact via the Artifact tool. Capture
@@ -123,9 +129,9 @@ given the rarity of that event at this scale.
 
 ### Error handling
 
-- **WebFetch failure** (branch renamed, GitHub unreachable, rate-limited)
-  → surface directly to the CSM; never silently fall back to stale or
-  guessed content.
+- **`curl` fetch failure** (branch renamed, GitHub unreachable, rate-limited,
+  non-2xx response) → surface directly to the CSM; never silently fall back
+  to stale or guessed content.
 - **Scheduled-task creation failure** → surface per-task, naming which
   automation failed and why; never silently skip one of the three.
 - **Artifact refresh-button capability** → same open question already
@@ -154,9 +160,15 @@ verification the Code-branch spec already used.
 - ❓ **Artifact ask-Claude capability availability** — unresolved, inherited
   unchanged from the Code-branch spec.
 - ❓ **GitHub connector recovery** — if/when the GitHub MCP connector
-  starts working reliably in CoWork, it could replace `WebFetch` for
-  fetching templates with no functional change to this design. Not a
-  blocker either way since `WebFetch` is already confirmed working.
+  starts working reliably in CoWork, it could replace the `curl`-via-Bash
+  fetch with no functional change to this design. Not a blocker either way
+  since `curl` is already confirmed working and byte-accurate.
+- ⚠️ **`WebFetch` is unsuitable for this design** — found during the Task 5
+  dry run: it summarizes large fetched files instead of returning raw
+  bytes. Any future change to this design (or a CSM improvising past the
+  README's exact wording) must not substitute `WebFetch` for `curl` when
+  fetching `command-center.html` or any other file whose bytes must survive
+  intact.
 
 ---
 

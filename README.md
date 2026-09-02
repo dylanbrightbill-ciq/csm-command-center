@@ -40,10 +40,11 @@ message in a **Claude CoWork** session.
 **Step 1.** Open a CoWork session with Claude and paste this, filling in
 your name:
 
-> Hi Claude, I'd like to set up my own CSM Command Center. Fetch the setup
-> files from the `cowork` branch of
-> `https://raw.githubusercontent.com/dylanbrightbill-ciq/csm-command-center/cowork/`
-> — specifically `skills/bob-sfdc-sync.md`, `skills/morning-meeting-prep.md`,
+> Hi Claude, I'd like to set up my own CSM Command Center. Use `curl` via
+> Bash (not WebFetch — it summarizes large files instead of returning them
+> raw) to fetch these four files from the `cowork` branch of
+> `https://raw.githubusercontent.com/dylanbrightbill-ciq/csm-command-center/cowork/`:
+> `skills/bob-sfdc-sync.md`, `skills/morning-meeting-prep.md`,
 > `skills/eod-todo-csm-tracker.md`, `src/artifact/command-center.html`, and
 > `scripts/empty-seed.json`. My name is **[Your Full Name, exactly as it
 > appears in Salesforce]**. Please fill in my name on the three skill files,
