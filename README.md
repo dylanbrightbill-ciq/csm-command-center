@@ -1,4 +1,4 @@
-# 🧭 CSM Command Center
+# 🧭 CSM Command Center - Claude Code Setup
 
 Your own personal dashboard for the day-to-day of being a CSM. One page,
 three tabs, kept up to date automatically:
@@ -17,7 +17,7 @@ No spreadsheets, no manual updates. You open it, it's current.
 
 ## What you'll need
 
-This runs through Claude, using a few connectors turned on in your Claude
+This runs through Claude Code, using a few connectors turned on in your Claude
 settings. Make sure these are connected before setup:
 
 - **Salesforce** — for your book of business data
@@ -29,7 +29,7 @@ settings. Make sure these are connected before setup:
 If any of these aren't turned on yet, turn them on first — everything below
 assumes they're ready to go.
 
-## Setup — takes about 5 minutes, no coding required
+## Setup — takes about 5 minutes:
 
 Everything technical is done *for* you. All you do is send Claude one
 message.
@@ -38,7 +38,7 @@ message.
 add you to the GitHub repository (`csm-command-center`) — you'll get an
 email invite. Accept it.
 
-**Step 2.** Open a chat with Claude and paste this, filling in your name:
+**Step 2.** Open a session with Claude Code and paste this, filling in your name:
 
 > Hi Claude, I'd like to set up my own CSM Command Center from
 > `https://github.com/dylanbrightbill-ciq/csm-command-center`. My name is
@@ -48,13 +48,14 @@ email invite. Accept it.
 **Step 3.** Claude will publish your dashboard and give you a link.
 **Bookmark it** — that's your Command Center from now on.
 
-**Step 4.** Claude will also set up three automations behind the scenes (the
+**Step 4.** Claude will also set up three automations (Routines in Code) behind the scenes (the
 Book of Business sync, the morning meeting prep, and the end-of-day to-do
 list). You don't need to do anything else — they just start running on
 schedule.
 
 That's it. Your accounts will populate automatically the first time the
-Book of Business sync runs, even if you're starting from nothing.
+Book of Business sync runs, even if you're starting from nothing. 
+You can manually run these Routines to get it started immediately.
 
 ## Using it day to day
 
