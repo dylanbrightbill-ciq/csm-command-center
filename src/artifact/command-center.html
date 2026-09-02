@@ -19,6 +19,7 @@
   --color-accent-ink: oklch(98% 0.01 225); --color-graphite: oklch(21% 0.03 258);
   --color-graphite-ink: oklch(93% 0.008 85); --color-graphite-muted: oklch(64% 0.014 250);
   --color-warn: oklch(62% 0.11 55); --color-good: oklch(58% 0.10 150);
+  --color-bad: oklch(58% 0.19 25); --color-info: oklch(58% 0.13 255);
   --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
   --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -38,9 +39,10 @@ a { color: var(--color-accent); }
 .statusbar { background: var(--color-graphite); color: var(--color-graphite-ink); display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-sm) var(--space-lg); flex-wrap: wrap; }
 .statusbar .wordmark { font-family: var(--font-display); font-weight: 700; font-size: var(--text-lg); display: flex; align-items: center; gap: var(--space-xs); }
 .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-accent); flex-shrink: 0; }
-.statusbar .syncs { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+.statusbar .syncs { display: flex; gap: var(--space-md); flex-wrap: wrap; align-items: center; }
 .sync-chip { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-graphite-muted); display: flex; gap: var(--space-2xs); }
 .sync-chip b { color: var(--color-graphite-ink); font-weight: 500; }
+.sync-chip.is-readonly { color: var(--color-warn); }
 .tabstrip { display: flex; gap: var(--space-lg); padding: 0 var(--space-lg); border-bottom: 1px solid var(--color-rule); background: var(--color-paper); }
 .tab { font-family: var(--font-body); font-weight: 600; font-size: var(--text-sm); color: var(--color-muted); background: none; border: none; padding: var(--space-sm) var(--space-2xs); cursor: pointer; position: relative; transition: color .15s var(--ease-out); }
 .tab::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: transparent; transition: background .15s var(--ease-out); }
@@ -56,29 +58,69 @@ a { color: var(--color-accent); }
 .kpi .mono-label { display: block; margin-bottom: var(--space-2xs); }
 .kpi .value { font-family: var(--font-body); font-weight: 600; font-size: var(--text-xl); color: var(--color-ink); }
 .panel { border: 1px solid var(--color-rule); border-radius: var(--radius-md); overflow: hidden; background: var(--color-paper); }
-.panel-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--color-rule); }
+.panel-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--color-rule); gap: var(--space-sm); flex-wrap: wrap; }
 .panel-head h2 { font-family: var(--font-body); font-weight: 600; font-size: var(--text-md); color: var(--color-ink); margin: 0; }
+.panel-head-actions { display: flex; gap: var(--space-xs); }
 .refresh-btn { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-ink-2); background: transparent; border: 1px solid var(--color-rule-2); border-radius: var(--radius-sm); padding: 6px 10px; cursor: pointer; transition: border-color .15s var(--ease-out), color .15s var(--ease-out); }
 .refresh-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
 .refresh-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 .refresh-btn:active { transform: translateY(1px); }
+
+/* ---- BoB toolbar: search + filters ---- */
+.bob-toolbar { display: flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--color-rule); flex-wrap: wrap; }
+.bob-toolbar input[type="text"], .bob-toolbar select { font-family: var(--font-body); font-size: var(--text-sm); color: var(--color-ink-2); background: var(--color-paper); border: 1px solid var(--color-rule-2); border-radius: var(--radius-sm); padding: 6px 8px; }
+.bob-toolbar input[type="text"] { flex: 1 1 220px; min-width: 160px; }
+.bob-toolbar label.chk { font-size: var(--text-sm); color: var(--color-ink-2); display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+#bobResultCount { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-muted); white-space: nowrap; margin-left: auto; }
+
+/* ---- Customize columns panel ---- */
+.cp-panel { border-bottom: 1px solid var(--color-rule); background: var(--color-paper-2); padding: var(--space-md); display: none; }
+.cp-panel.is-open { display: block; }
+.cp-zones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-md); }
+.cp-zone h3 { margin: 0 0 var(--space-xs); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); font-weight: 600; }
+.cp-chip-list { min-height: 60px; border: 1px dashed var(--color-rule-2); border-radius: var(--radius-sm); padding: var(--space-xs); display: flex; flex-direction: column; gap: 4px; background: var(--color-paper); }
+.cp-chip-list.drag-over { background: color-mix(in oklch, var(--color-accent) 12%, var(--color-paper)); border-color: var(--color-accent); }
+.cp-chip { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); background: var(--color-paper-2); border: 1px solid var(--color-rule); border-radius: var(--radius-sm); padding: 4px 6px; cursor: grab; }
+.cp-chip.dragging { opacity: .35; }
+.cp-chip .cp-label { flex: 1; }
+.cp-chip button { font-family: var(--font-mono); font-size: 10px; background: transparent; border: 1px solid var(--color-rule-2); border-radius: 4px; color: var(--color-muted); cursor: pointer; padding: 1px 4px; line-height: 1.4; }
+.cp-chip button:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.cp-actions { margin-top: var(--space-sm); display: flex; justify-content: flex-end; gap: var(--space-sm); }
+
 .bob-table-wrap { max-height: 70vh; overflow: auto; }
-.bob-table { width: 100%; border-collapse: collapse; }
-.bob-table thead th { position: sticky; top: 0; font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); text-align: left; font-weight: 500; padding: var(--space-xs) var(--space-md); border-bottom: 1px solid var(--color-rule); background: var(--color-paper-2); }
+.bob-table { border-collapse: collapse; min-width: 100%; }
+.bob-table thead th { position: sticky; top: 0; font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); text-align: left; font-weight: 500; padding: var(--space-xs) var(--space-md); border-bottom: 1px solid var(--color-rule); background: var(--color-paper-2); cursor: pointer; user-select: none; white-space: nowrap; }
+.bob-table thead th:hover { color: var(--color-ink); }
 .bob-table tbody td { padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--color-rule); font-size: var(--text-sm); white-space: nowrap; }
 .bob-table tbody tr:last-child td { border-bottom: none; }
-.bob-table tbody tr:hover { background: var(--color-paper-2); }
-.account-name { font-weight: 600; color: var(--color-ink); }
-.expand-btn { background: none; border: none; cursor: pointer; color: var(--color-muted); font-size: var(--text-sm); padding: 0; width: 16px; line-height: 1; }
+.bob-table tbody tr.bob-row:hover td { background: var(--color-paper-2); }
+.account-name { font-weight: 600; color: var(--color-ink); display: flex; align-items: center; gap: 6px; }
+.col-pin { position: sticky; left: 0; z-index: 2; background: var(--color-paper); box-shadow: 1px 0 0 var(--color-rule); }
+.bob-table thead th.col-pin { z-index: 3; background: var(--color-paper-2); }
+.bob-table tbody tr.bob-row:hover td.col-pin { background: var(--color-paper-2); }
+.expand-btn { background: none; border: none; cursor: pointer; color: var(--color-muted); font-size: var(--text-sm); padding: 0; width: 14px; line-height: 1; flex-shrink: 0; }
 .expand-btn:hover { color: var(--color-accent); }
 .bob-table tbody tr.detail-row td { white-space: normal; background: var(--color-paper-2); padding: var(--space-md); }
 .detail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-sm) var(--space-md); }
 .detail-field { display: flex; flex-direction: column; gap: 2px; }
 .detail-field .value { font-size: var(--text-sm); color: var(--color-ink-2); }
-.chip { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 8px; border-radius: var(--radius-sm); border: 1px solid var(--color-rule-2); color: var(--color-ink-2); }
-.chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--color-muted); }
-.chip.is-thriving::before { background: var(--color-good); }
-.chip.is-watching::before, .chip.is-declining::before { background: var(--color-warn); }
+
+.badge { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 8px; border-radius: var(--radius-sm); border: 1px solid var(--color-rule-2); color: var(--color-muted); }
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--color-muted); }
+.badge.green { border-color: var(--color-good); color: var(--color-good); } .badge.green::before { background: var(--color-good); }
+.badge.amber { border-color: var(--color-warn); color: var(--color-warn); } .badge.amber::before { background: var(--color-warn); }
+.badge.red { border-color: var(--color-bad); color: var(--color-bad); } .badge.red::before { background: var(--color-bad); }
+.badge.blue { border-color: var(--color-info); color: var(--color-info); } .badge.blue::before { background: var(--color-info); }
+.acct-meta { font-size: var(--text-xs); color: var(--color-muted); margin-top: 2px; }
+
+/* ---- inline-editable fields: look like plain text until hover/focus ---- */
+.edit-field { border: 1px solid transparent; background: transparent; font-family: inherit; font-size: var(--text-sm); color: var(--color-ink-2); padding: 3px 4px; border-radius: var(--radius-sm); width: 100%; }
+.edit-field:hover { border-color: var(--color-rule-2); background: var(--color-paper); }
+.edit-field:focus { border-color: var(--color-accent); background: var(--color-paper); outline: none; }
+.edit-field[disabled] { opacity: .6; cursor: not-allowed; }
+textarea.edit-field { resize: vertical; min-height: 28px; font-family: inherit; }
+select.edit-field.risk-gray { color: var(--color-muted); } select.edit-field.risk-red { color: var(--color-bad); } select.edit-field.risk-amber { color: var(--color-warn); } select.edit-field.risk-green { color: var(--color-good); } select.edit-field.risk-blue { color: var(--color-info); }
+
 .week-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-sm); }
 .day-col { border: 1px solid var(--color-rule); border-radius: var(--radius-md); background: var(--color-paper); display: flex; flex-direction: column; min-width: 0; }
 .day-head { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-muted); padding: var(--space-sm) var(--space-sm) var(--space-xs); border-bottom: 1px solid var(--color-rule); }
@@ -99,9 +141,8 @@ a { color: var(--color-accent); }
 .kanban-card { margin: var(--space-sm); padding: var(--space-sm); border: 1px solid var(--color-rule); border-radius: var(--radius-sm); background: var(--color-paper-2); }
 .kanban-card .todo-text { display: block; font-size: var(--text-sm); color: var(--color-ink-2); margin-bottom: var(--space-xs); }
 .kanban-card.is-done .todo-text { color: var(--color-muted); text-decoration: line-through; }
-.badge { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 8px; border-radius: var(--radius-sm); border: 1px solid var(--color-rule-2); color: var(--color-muted); }
 .empty-note { padding: var(--space-md); font-size: var(--text-sm); color: var(--color-muted); }
-@media (max-width: 900px) { .week-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kanban { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .week-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kanban { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cp-zones { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .statusbar { flex-direction: column; align-items: flex-start; } .week-grid, .kanban { grid-template-columns: 1fr; } .tabstrip { gap: var(--space-md); } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -123,14 +164,36 @@ a { color: var(--color-accent); }
   <section class="tabpanel is-active" id="panel-bob" role="tabpanel" aria-labelledby="tab-bob">
     <div class="kpis" id="kpis"></div>
     <section class="panel">
-      <div class="panel-head"><h2>Book of Business</h2><button class="refresh-btn" type="button">Refresh</button></div>
+      <div class="panel-head">
+        <h2>Book of Business</h2>
+        <div class="panel-head-actions">
+          <button class="refresh-btn" type="button" id="bobCustomizeBtn">Customize Columns</button>
+          <button class="refresh-btn" type="button">Refresh</button>
+        </div>
+      </div>
+      <div class="cp-panel" id="bobCustomizePanel">
+        <div class="cp-zones">
+          <div class="cp-zone"><h3>Main Row</h3><div class="cp-chip-list" data-zone="main" id="cpZoneMain"></div></div>
+          <div class="cp-zone"><h3>Details Panel</h3><div class="cp-chip-list" data-zone="details" id="cpZoneDetails"></div></div>
+          <div class="cp-zone"><h3>Hidden</h3><div class="cp-chip-list" data-zone="hidden" id="cpZoneHidden"></div></div>
+        </div>
+        <div class="cp-actions">
+          <button class="refresh-btn" type="button" id="bobResetLayoutBtn">Reset to Default</button>
+          <button class="refresh-btn" type="button" id="bobCloseCustomizeBtn">Done</button>
+        </div>
+      </div>
+      <div class="bob-toolbar">
+        <input type="text" id="bobSearch" placeholder="Search account name, exec sponsor, notes…">
+        <select id="bobFilterRisk"><option value="">All manual risk</option></select>
+        <select id="bobFilterSentiment"><option value="">All CSM sentiment</option></select>
+        <label class="chk"><input type="checkbox" id="bobFilterOpenRisk"> Open risk records only</label>
+        <label class="chk"><input type="checkbox" id="bobFilterActiveImpl"> Active implementation only</label>
+        <button class="refresh-btn" type="button" id="bobClearFiltersBtn">Clear</button>
+        <span id="bobResultCount"></span>
+      </div>
       <div class="bob-table-wrap">
-        <table class="bob-table">
-          <thead><tr>
-            <th></th><th>Account</th><th>ARR (Active Sub)</th><th>ARR (Sum)</th><th>Renewal</th>
-            <th>Cadence</th><th>Churn</th><th>Sentiment</th><th>Risk</th><th>Risk Records</th>
-            <th>Expansion</th><th>Active Proc.</th><th>Implementation</th>
-          </tr></thead>
+        <table class="bob-table" id="bobTable">
+          <thead id="bobHead"></thead>
           <tbody id="bob-rows"></tbody>
         </table>
       </div>
@@ -157,18 +220,24 @@ __SEED_DATA__
 </script>
 
 <script>
+// Frozen snapshot of this file's own static source (everything except the seed JSON),
+// used ONLY to self-publish a fresh full page when a viewer edits a cell. Filled in by
+// scripts/build-artifact.py at build time — DO NOT hand-edit the escaped string it produces.
+// If you edit this file's HTML/CSS/JS, just re-run build-artifact.py; nothing else to sync.
+var DOC_TEMPLATE_SRC = "__DOC_TEMPLATE_SRC__";
+
 (function () {
   var seed = JSON.parse(document.getElementById('seed-data').textContent);
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function money(n) { return n == null ? '—' : '$' + Math.round(n).toLocaleString('en-US'); }
   function dateStr(s) { if (!s) return '—'; var d = new Date(s + 'T00:00:00'); return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); }
-  function sentimentClass(s) { s = (s || '').toLowerCase(); if (s.indexOf('thriv') !== -1) return 'is-thriving'; if (s.indexOf('watch') !== -1 || s.indexOf('declin') !== -1) return 'is-watching'; return ''; }
   function disp(v) { return (v == null || v === '') ? '—' : esc(v); }
   function listDisp(v) { if (!v || !v.length) return '—'; return esc(v.map(function (r) { return typeof r === 'string' ? r : (r.name || r.title || JSON.stringify(r)); }).join(', ')); }
   function boolDisp(v) { if (v === true) return 'Yes'; if (v === false) return 'No'; return disp(v); }
   function pctDisp(v) { return (v == null || v === '') ? '—' : esc(v) + '%'; }
   function detailField(label, value) { return '<div class="detail-field"><span class="mono-label">' + esc(label) + '</span><span class="value">' + value + '</span></div>'; }
+  function daysUntil(s) { if (!s) return null; var d = new Date(s + 'T00:00:00'); return Math.round((d.getTime() - Date.now()) / 86400000); }
   function ago(iso) {
     if (!iso) return 'never';
     var mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
@@ -181,10 +250,13 @@ __SEED_DATA__
   // ---- status bar ----
   document.getElementById('syncs').innerHTML = [
     ['BOB', seed.lastSynced.salesforce], ['MEETINGS', seed.lastSynced.meetings], ['TODOS', seed.lastSynced.eodTodo]
-  ].map(function (p) { return '<span class="sync-chip">' + p[0] + ' <b>synced ' + ago(p[1]) + '</b></span>'; }).join('');
+  ].map(function (p) { return '<span class="sync-chip">' + p[0] + ' <b>synced ' + ago(p[1]) + '</b></span>'; }).join('') +
+    '<span class="sync-chip" id="bobWriteStatus" hidden></span>';
 
   // ---- KPIs ----
   var accounts = seed.accounts || [];
+  var accountsById = {};
+  accounts.forEach(function (a) { accountsById[a.accountId] = a; });
   var totalArr = accounts.reduce(function (s, a) { return s + (a.arrActive || 0); }, 0);
   var in90 = Date.now() + 90 * 86400000;
   var renewals90 = accounts.filter(function (a) { return a.renewalDate && new Date(a.renewalDate).getTime() <= in90; }).length;
@@ -194,59 +266,456 @@ __SEED_DATA__
     ['Total ARR', money(totalArr)], ['Renewals ≤ 90d', renewals90], ['Open risk', openRisk], ['Open todos', openTodos]
   ].map(function (p) { return '<div class="kpi"><span class="mono-label">' + p[0] + '</span><span class="value tabular">' + p[1] + '</span></div>'; }).join('');
 
-  // ---- Book of Business table ----
-  document.getElementById('bob-rows').innerHTML = accounts
-    .slice().sort(function (a, b) { return (a.accountName || '').localeCompare(b.accountName || ''); })
-    .map(function (a, i) {
-      var rowId = 'bob-detail-' + i;
-      return '<tr class="bob-row">' +
-        '<td><button class="expand-btn" type="button" aria-expanded="false" aria-controls="' + rowId + '">&#9656;</button></td>' +
-        '<td class="account-name">' + esc(a.accountName) + '</td>' +
-        '<td class="tabular">' + money(a.arrActive) + '</td>' +
-        '<td class="tabular">' + money(a.arrSumOfAmount) + '</td>' +
-        '<td class="tabular">' + dateStr(a.renewalDate) + '</td>' +
-        '<td>' + disp(a.meetingCadence) + '</td>' +
-        '<td class="tabular">' + disp(a.churnScore) + '</td>' +
-        '<td><span class="chip ' + sentimentClass(a.csmSentiment) + '">' + esc(a.csmSentiment || '—') + '</span></td>' +
-        '<td><span class="chip">' + esc(a.risk || '—') + '</span></td>' +
-        '<td>' + listDisp(a.riskRecords) + '</td>' +
-        '<td class="tabular">' + disp(a.expansionPipeline) + '</td>' +
-        '<td>' + boolDisp(a.activeProcessing) + '</td>' +
-        '<td>' + boolDisp(a.implementation) + '</td>' +
-        '</tr>' +
-        '<tr class="detail-row" id="' + rowId + '" hidden><td colspan="13"><div class="detail-grid">' +
-          detailField('Customer Service Start Date', dateStr(a.customerServiceStartDate)) +
-          detailField('Support Level', disp(a.supportLevel)) +
-          detailField('Fiscal Year', disp(a.fiscalYear)) +
-          detailField('Processing Frequency', disp(a.processingFrequency)) +
-          detailField('Previous Tool', disp(a.previousTool)) +
-          detailField('Seats Occupied', disp(a.seatsOccupied)) +
-          detailField('Payees Purchased', disp(a.payeesPurchased)) +
-          detailField('Seat Utilization', pctDisp(a.seatUtilization)) +
-          detailField('Instance Seat Count', disp(a.instanceSeatCount)) +
-          detailField('MSA Price Increase Cap', disp(a.msaPriceIncreaseCap)) +
-          detailField('Cap Research Status', disp(a.capResearchStatus)) +
-          detailField('CIQ Executive Sponsor', disp(a.ciqExecutiveSponsor)) +
-          detailField('Last EBR', dateStr(a.lastEbr)) +
-          detailField('Notes', disp(a.notes)) +
-          detailField('Private/Public', disp(a.privatePublic)) +
-          detailField('Industry', disp(a.industry)) +
-        '</div></td></tr>';
-    }).join('');
+  // =========================================================================
+  // Book of Business table — sorting, search/filter, customizable columns,
+  // expand/collapse detail rows, and inline editing that publishes straight
+  // to this artifact (see publishSeed() at the bottom of this section).
+  // =========================================================================
 
-  document.getElementById('bob-rows').addEventListener('click', function (e) {
-    var btn = e.target.closest('.expand-btn');
-    if (!btn) return;
-    var detail = document.getElementById(btn.getAttribute('aria-controls'));
-    var open = btn.getAttribute('aria-expanded') === 'true';
-    btn.setAttribute('aria-expanded', String(!open));
-    btn.innerHTML = open ? '&#9656;' : '&#9662;';
-    detail.hidden = open;
+  var RISK_OPTIONS = ['1. High', '2. Med', '3. Low', '4. Stable'];
+  var CAP_STATUS_OPTIONS = ['Confirmed', 'Confirmed no cap', 'Likely', 'Not found'];
+
+  function riskClass(v) {
+    if (!v) return 'gray';
+    if (v.indexOf('High') !== -1) return 'red';
+    if (v.indexOf('Med') !== -1) return 'amber';
+    if (v.indexOf('Low') !== -1) return 'green';
+    if (v.indexOf('Stable') !== -1) return 'blue';
+    return 'gray';
+  }
+  function churnClass(v) {
+    if (v == null) return 'gray';
+    if (v >= 68) return 'red';
+    if (v >= 34) return 'amber';
+    return 'green';
+  }
+  function renewalClass(days) {
+    if (days == null || days < 0) return 'gray';
+    if (days <= 30) return 'red';
+    if (days <= 90) return 'amber';
+    return 'green';
+  }
+
+  // data-account-id + data-field on every editable control is how one delegated
+  // handler (onBobEdit, below) works for all of them, and how edits map back onto seed.accounts.
+  function editInput(a, field, type, opts) {
+    var val = a[field];
+    var dis = bobReadOnly ? ' disabled' : '';
+    if (type === 'select') {
+      return '<select class="edit-field" data-account-id="' + esc(a.accountId) + '" data-field="' + field + '"' + dis + '><option value="">—</option>' +
+        opts.map(function (o) { return '<option value="' + esc(o) + '"' + (o === val ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') +
+        '</select>';
+    }
+    if (type === 'textarea') {
+      return '<textarea class="edit-field" rows="1" data-account-id="' + esc(a.accountId) + '" data-field="' + field + '"' + dis + '>' + esc(val || '') + '</textarea>';
+    }
+    if (type === 'date') {
+      return '<input class="edit-field" type="date" data-account-id="' + esc(a.accountId) + '" data-field="' + field + '" value="' + esc(val || '') + '"' + dis + '>';
+    }
+    return '<input class="edit-field" type="text" data-account-id="' + esc(a.accountId) + '" data-field="' + field + '" value="' + esc(val || '') + '"' + dis + '>';
+  }
+
+  var bobReadOnly = false;
+
+  var FIELDS = {
+    arrActive: { label: 'ARR (Active Sub)', numeric: true, render: function (a) { return money(a.arrActive); }, sortValue: function (a) { return a.arrActive || 0; } },
+    arrSumOfAmount: { label: 'ARR (Sum)', numeric: true, render: function (a) { return money(a.arrSumOfAmount); }, sortValue: function (a) { return a.arrSumOfAmount || 0; } },
+    renewalDate: {
+      label: 'Renewal',
+      render: function (a) {
+        if (!a.renewalDate) return '<span class="badge gray">—</span>';
+        var days = daysUntil(a.renewalDate);
+        var cap = '<div class="acct-meta">' + (days >= 0 ? days + ' days out' : 'past due') + '</div>';
+        return '<span class="badge ' + renewalClass(days) + '">' + dateStr(a.renewalDate) + '</span>' + cap;
+      },
+      sortValue: function (a) { return a.renewalDate || ''; }
+    },
+    meetingCadence: { label: 'Cadence', render: function (a) { return disp(a.meetingCadence); }, sortValue: function (a) { return a.meetingCadence || ''; } },
+    churnScore: { label: 'Churn', numeric: true, render: function (a) { return a.churnScore == null ? '<span class="badge gray">—</span>' : '<span class="badge ' + churnClass(a.churnScore) + '">' + a.churnScore + '</span>'; }, sortValue: function (a) { return a.churnScore == null ? -1 : a.churnScore; } },
+    csmSentiment: { label: 'Sentiment', editable: true, render: function (a) { return editInput(a, 'csmSentiment', 'text'); }, sortValue: function (a) { return a.csmSentiment || ''; } },
+    risk: {
+      label: 'Risk', editable: true,
+      render: function (a) { return '<span class="risk-wrap ' + riskClass(a.risk) + '" style="display:block">' + editInput(a, 'risk', 'select', RISK_OPTIONS).replace('class="edit-field"', 'class="edit-field risk-' + riskClass(a.risk) + '"') + '</span>'; },
+      sortValue: function (a) { return a.risk || ''; }
+    },
+    riskRecords: {
+      label: 'Risk Records', numeric: true,
+      render: function (a) {
+        var recs = a.riskRecords || [];
+        if (!recs.length) return '<span class="badge gray">—</span>';
+        return '<span class="badge amber" title="' + esc(recs.join('; ')) + '">' + recs.length + ' open</span>';
+      },
+      sortValue: function (a) { return (a.riskRecords || []).length; }
+    },
+    expansionPipeline: { label: 'Expansion', numeric: true, render: function (a) { return disp(a.expansionPipeline); }, sortValue: function (a) { return a.expansionPipeline == null ? -1 : a.expansionPipeline; } },
+    activeProcessing: { label: 'Active Proc.', render: function (a) { return boolDisp(a.activeProcessing); }, sortValue: function (a) { return a.activeProcessing === true ? 1 : (a.activeProcessing === false ? 0 : -1); } },
+    implementation: { label: 'Implementation', render: function (a) { return boolDisp(a.implementation); }, sortValue: function (a) { return a.implementation === true ? 1 : (a.implementation === false ? 0 : -1); } },
+    customerServiceStartDate: { label: 'Customer Service Start Date', render: function (a) { return dateStr(a.customerServiceStartDate); }, sortValue: function (a) { return a.customerServiceStartDate || ''; } },
+    supportLevel: { label: 'Support Level', render: function (a) { return disp(a.supportLevel); }, sortValue: function (a) { return a.supportLevel || ''; } },
+    fiscalYear: { label: 'Fiscal Year', render: function (a) { return disp(a.fiscalYear); }, sortValue: function (a) { return a.fiscalYear || ''; } },
+    processingFrequency: { label: 'Processing Frequency', render: function (a) { return disp(a.processingFrequency); }, sortValue: function (a) { return a.processingFrequency || ''; } },
+    previousTool: { label: 'Previous Tool', render: function (a) { return disp(a.previousTool); }, sortValue: function (a) { return a.previousTool || ''; } },
+    seatsOccupied: { label: 'Seats Occupied', numeric: true, render: function (a) { return disp(a.seatsOccupied); }, sortValue: function (a) { return a.seatsOccupied == null ? -1 : a.seatsOccupied; } },
+    payeesPurchased: { label: 'Payees Purchased', numeric: true, render: function (a) { return disp(a.payeesPurchased); }, sortValue: function (a) { return a.payeesPurchased == null ? -1 : a.payeesPurchased; } },
+    seatUtilization: { label: 'Seat Utilization', numeric: true, render: function (a) { return pctDisp(a.seatUtilization); }, sortValue: function (a) { return a.seatUtilization == null ? -1 : a.seatUtilization; } },
+    instanceSeatCount: { label: 'Instance Seat Count', numeric: true, render: function (a) { return disp(a.instanceSeatCount); }, sortValue: function (a) { return a.instanceSeatCount == null ? -1 : a.instanceSeatCount; } },
+    msaPriceIncreaseCap: { label: 'MSA Price Increase Cap', editable: true, render: function (a) { return editInput(a, 'msaPriceIncreaseCap', 'text'); }, sortValue: function (a) { return a.msaPriceIncreaseCap || ''; } },
+    capResearchStatus: { label: 'Cap Research Status', editable: true, render: function (a) { return editInput(a, 'capResearchStatus', 'select', CAP_STATUS_OPTIONS); }, sortValue: function (a) { return a.capResearchStatus || ''; } },
+    ciqExecutiveSponsor: { label: 'CIQ Executive Sponsor', editable: true, render: function (a) { return editInput(a, 'ciqExecutiveSponsor', 'text'); }, sortValue: function (a) { return a.ciqExecutiveSponsor || ''; } },
+    lastEbr: { label: 'Last EBR', editable: true, render: function (a) { return editInput(a, 'lastEbr', 'date'); }, sortValue: function (a) { return a.lastEbr || ''; } },
+    notes: { label: 'Notes', editable: true, wrap: true, render: function (a) { return editInput(a, 'notes', 'textarea'); }, sortValue: function (a) { return a.notes || ''; } },
+    privatePublic: { label: 'Private/Public', render: function (a) { return disp(a.privatePublic); }, sortValue: function (a) { return a.privatePublic || ''; } },
+    industry: { label: 'Industry', render: function (a) { return disp(a.industry); }, sortValue: function (a) { return a.industry || ''; } }
+  };
+  var ALL_FIELD_KEYS = Object.keys(FIELDS);
+
+  var DEFAULT_LAYOUT = {
+    main: ['arrActive', 'arrSumOfAmount', 'renewalDate', 'meetingCadence', 'churnScore', 'csmSentiment', 'risk', 'riskRecords', 'expansionPipeline', 'activeProcessing', 'implementation'],
+    details: ['customerServiceStartDate', 'supportLevel', 'fiscalYear', 'processingFrequency', 'previousTool', 'seatsOccupied', 'payeesPurchased', 'seatUtilization', 'instanceSeatCount', 'msaPriceIncreaseCap', 'capResearchStatus', 'ciqExecutiveSponsor', 'lastEbr', 'notes', 'privatePublic', 'industry'],
+    hidden: []
+  };
+  var LS_LAYOUT = 'cc_bob_layout_v1'; // per-viewer UI preference only — not shared data, kept out of the artifact
+
+  function loadLayout() {
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(LS_LAYOUT)); } catch (e) {}
+    if (!saved) return JSON.parse(JSON.stringify(DEFAULT_LAYOUT));
+    var out = { main: saved.main || [], details: saved.details || [], hidden: saved.hidden || [] };
+    ['main', 'details', 'hidden'].forEach(function (z) { out[z] = out[z].filter(function (k) { return FIELDS[k]; }); });
+    var seen = {};
+    out.main.concat(out.details, out.hidden).forEach(function (k) { seen[k] = true; });
+    ALL_FIELD_KEYS.forEach(function (k) { if (!seen[k]) out.details.push(k); });
+    return out;
+  }
+  function saveLayout() { try { localStorage.setItem(LS_LAYOUT, JSON.stringify(layout)); } catch (e) {} }
+  var layout = loadLayout();
+
+  var sortState = { key: null, dir: 1 };
+  var expandedRows = {};
+
+  function getFilteredSorted() {
+    var q = (document.getElementById('bobSearch').value || '').trim().toLowerCase();
+    var fr = document.getElementById('bobFilterRisk').value;
+    var fs = document.getElementById('bobFilterSentiment').value;
+    var onlyOpenRisk = document.getElementById('bobFilterOpenRisk').checked;
+    var onlyActiveImpl = document.getElementById('bobFilterActiveImpl').checked;
+    var list = accounts.filter(function (a) {
+      if (fr && a.risk !== fr) return false;
+      if (fs && a.csmSentiment !== fs) return false;
+      if (onlyOpenRisk && !((a.riskRecords || []).length)) return false;
+      if (onlyActiveImpl && a.implementation !== true) return false;
+      if (q) {
+        var hay = [a.accountName, a.ciqExecutiveSponsor, a.notes].filter(Boolean).join(' ').toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+    var key = sortState.key, dir = sortState.dir;
+    list = list.slice().sort(function (a, b) {
+      var av, bv;
+      if (key === 'accountName' || !key) { av = a.accountName || ''; bv = b.accountName || ''; }
+      else { av = FIELDS[key].sortValue(a); bv = FIELDS[key].sortValue(b); }
+      if (av == null) av = '';
+      if (bv == null) bv = '';
+      if (typeof av === 'string') av = av.toLowerCase();
+      if (typeof bv === 'string') bv = bv.toLowerCase();
+      if (av < bv) return -1 * dir;
+      if (av > bv) return 1 * dir;
+      return (a.accountName || '').localeCompare(b.accountName || '');
+    });
+    return list;
+  }
+
+  function populateFilterOptions() {
+    var riskEl = document.getElementById('bobFilterRisk');
+    RISK_OPTIONS.forEach(function (o) { var opt = document.createElement('option'); opt.value = o; opt.textContent = o; riskEl.appendChild(opt); });
+    refreshSentimentFilterOptions();
+  }
+  function refreshSentimentFilterOptions() {
+    var el = document.getElementById('bobFilterSentiment');
+    var current = el.value;
+    var seen = {};
+    accounts.forEach(function (a) { if (a.csmSentiment) seen[a.csmSentiment] = true; });
+    var opts = Object.keys(seen).sort();
+    el.innerHTML = '<option value="">All CSM sentiment</option>' + opts.map(function (s) { return '<option value="' + esc(s) + '">' + esc(s) + '</option>'; }).join('');
+    if (seen[current]) el.value = current;
+  }
+
+  function buildBobHead() {
+    function arrow(key) { return sortState.key === key ? (sortState.dir === 1 ? ' ▲' : ' ▼') : ''; }
+    var ths = '<th class="col-pin" data-field="accountName">Account' + arrow('accountName') + '</th>';
+    layout.main.forEach(function (k) { ths += '<th data-field="' + k + '">' + esc(FIELDS[k].label) + arrow(k) + '</th>'; });
+    return '<tr>' + ths + '</tr>';
+  }
+
+  function detailPanelHtml(a) {
+    return layout.details.map(function (k) { return detailField(FIELDS[k].label, FIELDS[k].render(a)); }).join('');
+  }
+
+  function bobRowHtml(a, idx) {
+    var expanded = !!expandedRows[a.accountId];
+    var rowId = 'bob-detail-' + idx;
+    var cols = layout.main.map(function (k) { return '<td' + (FIELDS[k].wrap ? ' class="wrap"' : '') + '>' + FIELDS[k].render(a) + '</td>'; }).join('');
+    var caret = layout.details.length ? '<button class="expand-btn" type="button" aria-expanded="' + expanded + '" data-toggle-account="' + esc(a.accountId) + '">' + (expanded ? '&#9662;' : '&#9656;') + '</button>' : '';
+    var row = '<tr class="bob-row">' +
+      '<td class="account-name col-pin">' + caret + '<span>' + esc(a.accountName) + '</span></td>' +
+      cols +
+      '</tr>';
+    if (layout.details.length) {
+      row += '<tr class="detail-row" id="' + rowId + '"' + (expanded ? '' : ' hidden') + '><td colspan="' + (layout.main.length + 1) + '"><div class="detail-grid">' + detailPanelHtml(a) + '</div></td></tr>';
+    }
+    return row;
+  }
+
+  var pendingBobRender = false;
+  function isEditFieldFocused() {
+    var el = document.activeElement;
+    return !!(el && el.classList && el.classList.contains('edit-field'));
+  }
+  function renderBob() {
+    if (isEditFieldFocused()) { pendingBobRender = true; return; }
+    pendingBobRender = false;
+    document.getElementById('bobHead').innerHTML = buildBobHead();
+    var list = getFilteredSorted();
+    document.getElementById('bob-rows').innerHTML = list.map(bobRowHtml).join('');
+    document.getElementById('bobResultCount').textContent = list.length + ' of ' + accounts.length + ' accounts';
+    attachBobHeadHandlers();
+    attachBobRowHandlers();
+  }
+
+  function attachBobHeadHandlers() {
+    document.querySelectorAll('#bobHead th[data-field]').forEach(function (th) {
+      th.addEventListener('click', function () {
+        var key = th.getAttribute('data-field');
+        if (sortState.key === key) sortState.dir *= -1; else { sortState.key = key; sortState.dir = 1; }
+        renderBob();
+      });
+    });
+  }
+
+  var bobPublishTimer = null;
+  var bobPublishDirty = false;
+  function scheduleBobPublish() {
+    bobPublishDirty = true;
+    clearTimeout(bobPublishTimer);
+    bobPublishTimer = setTimeout(flushBobEdits, 1500);
+  }
+  function flushBobEdits() {
+    clearTimeout(bobPublishTimer);
+    if (!bobPublishDirty || bobReadOnly) return;
+    bobPublishDirty = false;
+    publishSeed();
+  }
+
+  function onBobEdit(e) {
+    var el = e.target;
+    var id = el.getAttribute('data-account-id');
+    var field = el.getAttribute('data-field');
+    var a = accountsById[id];
+    if (!a) return;
+    var value = el.value === '' ? null : el.value;
+    a[field] = value;
+    if (field === 'risk') {
+      el.className = 'edit-field risk-' + riskClass(value);
+    }
+    if (field === 'csmSentiment') refreshSentimentFilterOptions();
+    scheduleBobPublish();
+  }
+
+  function attachBobRowHandlers() {
+    document.querySelectorAll('#bob-rows .expand-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-toggle-account');
+        expandedRows[id] = !expandedRows[id];
+        renderBob();
+      });
+    });
+    document.querySelectorAll('#bob-rows .edit-field').forEach(function (el) {
+      el.addEventListener('input', onBobEdit);
+      el.addEventListener('change', onBobEdit);
+      el.addEventListener('blur', function () {
+        flushBobEdits();
+        if (pendingBobRender) renderBob();
+      });
+    });
+  }
+
+  document.getElementById('bobSearch').addEventListener('input', renderBob);
+  document.getElementById('bobFilterRisk').addEventListener('change', renderBob);
+  document.getElementById('bobFilterSentiment').addEventListener('change', renderBob);
+  document.getElementById('bobFilterOpenRisk').addEventListener('change', renderBob);
+  document.getElementById('bobFilterActiveImpl').addEventListener('change', renderBob);
+  document.getElementById('bobClearFiltersBtn').addEventListener('click', function () {
+    document.getElementById('bobSearch').value = '';
+    document.getElementById('bobFilterRisk').value = '';
+    document.getElementById('bobFilterSentiment').value = '';
+    document.getElementById('bobFilterOpenRisk').checked = false;
+    document.getElementById('bobFilterActiveImpl').checked = false;
+    renderBob();
   });
 
+  // ---- Customize Columns panel: drag between zones, or use the ◀▲▼▶ buttons ----
+  var ZONE_ORDER = ['main', 'details', 'hidden'];
+  var ZONE_LABEL = { main: 'Main Row', details: 'Details Panel', hidden: 'Hidden' };
+  function moveFieldToZone(key, zone, beforeKey) {
+    ZONE_ORDER.forEach(function (z) { layout[z] = layout[z].filter(function (k) { return k !== key; }); });
+    var arr = layout[zone];
+    var idx = beforeKey ? arr.indexOf(beforeKey) : -1;
+    if (idx !== -1) arr.splice(idx, 0, key); else arr.push(key);
+    saveLayout();
+  }
+  function moveZoneRelative(key, delta) {
+    var curZone = ZONE_ORDER.filter(function (z) { return layout[z].indexOf(key) !== -1; })[0];
+    if (!curZone) return;
+    var zIdx = ZONE_ORDER.indexOf(curZone) + delta;
+    if (zIdx < 0 || zIdx >= ZONE_ORDER.length) return;
+    moveFieldToZone(key, ZONE_ORDER[zIdx]);
+    renderCustomizePanel(); renderBob();
+  }
+  function moveOrder(key, delta) {
+    var zone = ZONE_ORDER.filter(function (z) { return layout[z].indexOf(key) !== -1; })[0];
+    if (!zone) return;
+    var arr = layout[zone];
+    var idx = arr.indexOf(key), newIdx = idx + delta;
+    if (newIdx < 0 || newIdx >= arr.length) return;
+    var tmp = arr[idx]; arr[idx] = arr[newIdx]; arr[newIdx] = tmp;
+    saveLayout();
+    renderCustomizePanel(); renderBob();
+  }
+  function dropTargetKey(listEl, clientY) {
+    var chips = Array.prototype.slice.call(listEl.querySelectorAll('.cp-chip:not(.dragging)'));
+    for (var i = 0; i < chips.length; i++) {
+      var r = chips[i].getBoundingClientRect();
+      if (clientY < r.top + r.height / 2) return chips[i].getAttribute('data-key');
+    }
+    return null;
+  }
+  function cpChipHtml(key, zone, idx, len) {
+    return '<div class="cp-chip" draggable="true" data-key="' + esc(key) + '">' +
+      '<span class="cp-label">' + esc(FIELDS[key].label) + '</span>' +
+      '<button type="button" data-act="left" title="Move to previous zone">&#9664;</button>' +
+      '<button type="button" data-act="up" title="Move up"' + (idx === 0 ? ' disabled' : '') + '>&#9650;</button>' +
+      '<button type="button" data-act="down" title="Move down"' + (idx === len - 1 ? ' disabled' : '') + '>&#9660;</button>' +
+      '<button type="button" data-act="right" title="Move to next zone">&#9654;</button>' +
+      '</div>';
+  }
+  function renderCustomizePanel() {
+    ZONE_ORDER.forEach(function (zone) {
+      var el = document.getElementById('cpZone' + zone.charAt(0).toUpperCase() + zone.slice(1));
+      el.innerHTML = layout[zone].map(function (key, i) { return cpChipHtml(key, zone, i, layout[zone].length); }).join('');
+    });
+    document.querySelectorAll('.cp-chip').forEach(function (chip) {
+      var key = chip.getAttribute('data-key');
+      chip.addEventListener('dragstart', function (e) {
+        e.dataTransfer.setData('text/plain', key);
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(function () { chip.classList.add('dragging'); }, 0);
+      });
+      chip.addEventListener('dragend', function () { chip.classList.remove('dragging'); });
+      chip.querySelectorAll('button').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var act = btn.getAttribute('data-act');
+          if (act === 'up') moveOrder(key, -1);
+          else if (act === 'down') moveOrder(key, 1);
+          else if (act === 'left') moveZoneRelative(key, -1);
+          else if (act === 'right') moveZoneRelative(key, 1);
+        });
+      });
+    });
+  }
+  document.querySelectorAll('.cp-chip-list').forEach(function (listEl) {
+    listEl.addEventListener('dragover', function (e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; listEl.classList.add('drag-over'); });
+    listEl.addEventListener('dragleave', function () { listEl.classList.remove('drag-over'); });
+    listEl.addEventListener('drop', function (e) {
+      e.preventDefault();
+      listEl.classList.remove('drag-over');
+      var key = e.dataTransfer.getData('text/plain');
+      if (!key) return;
+      var zone = listEl.getAttribute('data-zone');
+      moveFieldToZone(key, zone, dropTargetKey(listEl, e.clientY));
+      renderCustomizePanel();
+      renderBob();
+    });
+  });
+  document.getElementById('bobCustomizeBtn').addEventListener('click', function () {
+    var panel = document.getElementById('bobCustomizePanel');
+    panel.classList.toggle('is-open');
+    if (panel.classList.contains('is-open')) renderCustomizePanel();
+  });
+  document.getElementById('bobCloseCustomizeBtn').addEventListener('click', function () {
+    document.getElementById('bobCustomizePanel').classList.remove('is-open');
+  });
+  document.getElementById('bobResetLayoutBtn').addEventListener('click', function () {
+    layout = JSON.parse(JSON.stringify(DEFAULT_LAYOUT));
+    saveLayout();
+    renderCustomizePanel();
+    renderBob();
+  });
+
+  // ---- Publish edits straight to this artifact ----
+  // The artifact capability (declared at publish time) lets this page save its own new
+  // versions. `use()` resolves later, never during this script's first run — edits made
+  // before it resolves just queue up normally and flush once it's ready.
+  var artifactCap = null;
+  var bobWriteStatusEl = document.getElementById('bobWriteStatus');
+  function showWriteStatus(text, isWarn) {
+    bobWriteStatusEl.hidden = false;
+    bobWriteStatusEl.textContent = text;
+    bobWriteStatusEl.classList.toggle('is-readonly', !!isWarn);
+  }
+  if (window.claude && window.claude.use) {
+    window.claude.use('artifact').then(function (cap) { artifactCap = cap; }).catch(function () { artifactCap = null; });
+  }
+  function buildFullDocument() {
+    // Order matters: substitute the seed FIRST, while it's still the only occurrence of its
+    // marker text in DOC_TEMPLATE_SRC — embedding the self-value before this would bury a
+    // second copy of the seed marker inside it, and this same replace would corrupt that
+    // copy too, baking today's seed permanently into every future generation's template.
+    // Built via concatenation for the same reason `marker` below is: the literal contiguous
+    // text must appear exactly once in this file (the seed-data script tag) for the build
+    // step's substitution to target only that spot.
+    var seedMarker = '__SEED' + '_DATA__';
+    var seedFilled = DOC_TEMPLATE_SRC.replace(seedMarker, JSON.stringify(seed));
+    // Re-fixes DOC_TEMPLATE_SRC's own placeholder inside the outgoing document too, so the
+    // NEXT generation can self-publish again (see the comment on DOC_TEMPLATE_SRC above).
+    // selfValue is computed from the ORIGINAL (pristine, unresolved) DOC_TEMPLATE_SRC, not
+    // seedFilled — it must stay "the template," never today's particular data.
+    // Built via concatenation on purpose: the literal contiguous marker text must appear
+    // exactly once in this file's source (the DOC_TEMPLATE_SRC assignment below) — writing
+    // it out whole here too would give the build step and this runtime substitution a
+    // second, wrong match to collide on.
+    var marker = '"' + '__DOC_TEMPLATE_SRC__' + '"';
+    var selfValue = JSON.stringify(DOC_TEMPLATE_SRC).replace(/<\/script/g, '<\\/script');
+    return seedFilled.split(marker).join(selfValue);
+  }
+  function publishSeed() {
+    if (!artifactCap) { scheduleBobPublish(); return; } // capability not ready yet — retry shortly
+    if (!DOC_TEMPLATE_SRC || DOC_TEMPLATE_SRC === '__DOC_TEMPLATE_SRC__') {
+      showWriteStatus('Self-publish unavailable in this copy — edits are not saved.', true);
+      return;
+    }
+    var html = buildFullDocument();
+    showWriteStatus('Saving…');
+    artifactCap.publish(html).then(function () {
+      // A successful publish reloads this view — nothing else to do.
+    }).catch(function (err) {
+      var code = err && err.code;
+      if (code === 'conflict') { return; } // routine — the view is already reloading to the winner
+      if (code === 'not_writer' || code === 'not_granted') {
+        bobReadOnly = true;
+        showWriteStatus('Read-only view — edits here are not saved.', true);
+        renderBob();
+        return;
+      }
+      showWriteStatus('Save failed (' + (code || 'error') + ') — will retry on your next edit.', true);
+    });
+  }
+
+  populateFilterOptions();
+  renderBob();
+
   // ---- Calendar: current work week, Mon-Fri ----
-  var byAccountId = {};
-  accounts.forEach(function (a) { byAccountId[a.accountId] = a; });
+  var byAccountId = accountsById;
   var today = new Date();
   var dow = today.getDay(); // 0=Sun
   var monday = new Date(today); monday.setDate(today.getDate() - ((dow + 6) % 7));

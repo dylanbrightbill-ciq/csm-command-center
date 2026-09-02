@@ -10,6 +10,21 @@ different top-level slice of the state and must never touch another's.
 | `morning-meeting-prep` | `meetings[date][accountId]`, `lastSynced.meetings` | `accounts`, `overrides`, `tasks`, `archived` |
 | `eod-todo-csm-tracker` | `tasks` (append-only), `lastSynced.eodTodo` | `accounts`, `overrides`, `meetings` |
 
+## A fourth writer: the page itself
+
+The artifact's own BoB table can self-publish too — inline-editing one of the
+7 manual account fields calls the `artifact` capability's `publish()` directly
+from the browser, no skill or cron involved. It follows a much simpler rule
+than the lock protocol below: the platform does compare-and-set for it
+(`publish` rejects `conflict` if a skill published in between, and every open
+view — including the editor's — just reloads to the winner; no retry). It
+only ever touches the one field a viewer edited, on one account, so it can
+never step on a skill's owned keys. See `DOC_TEMPLATE_SRC` in
+`src/artifact/command-center.html` for how the page reconstructs a full
+document to publish without serializing the live DOM — re-run
+`scripts/build-artifact.py` after any HTML/CSS/JS change to that file, since
+it re-embeds that template.
+
 ## The publish cycle (every trigger — cron or manual — follows this)
 
 1. Check `syncLocks.<yours>`.
