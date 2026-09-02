@@ -51,7 +51,7 @@ without any script execution outside a single chat turn.
 ## Scope
 
 **In scope:** a CoWork-native onboarding flow (one pasted chat message →
-published artifact + three scheduled automations), new `cowork/skills/*.md`
+published artifact + three scheduled automations), new `skills/*.md`
 templates that are self-contained (no `{{REPO_PATH}}` pointer), and a
 CoWork-specific README section with the paste-in-chat instructions.
 
@@ -100,11 +100,12 @@ given the rarity of that event at this scale.
 
 | Path | Change |
 |---|---|
-| `cowork/skills/bob-sfdc-sync.md`, `morning-meeting-prep.md`, `eod-todo-csm-tracker.md` (new) | Same three skills, same `{{CSM_NAME}}` / `{{ARTIFACT_URL}}` / `{{SFDC_CSM_FILTER}}` tokens as `main`'s `skills/*/SKILL.md`, but with the shared-refresh-protocol's read-merge-write steps and the fuzzy-matcher algorithm **inlined directly** — no `{{REPO_PATH}}` pointer, since there's no local clone at cron-run time to resolve one against. |
-| `cowork/README.md` (new) | CoWork-flavored onboarding message: fetch instructions instead of `git clone`, no mention of `setup.py` or local scheduled-task installation steps. |
-| `scripts/setup.py`, `scripts/build-artifact.py` | Not used on this branch. Their jobs (token substitution, artifact publish) happen live in the setup conversation instead of via script execution. Left absent from `cowork/`, not deleted from the branch's copy of `scripts/` — no need to actively remove them, they're simply not part of the CoWork flow. |
+| `skills/bob-sfdc-sync.md`, `morning-meeting-prep.md`, `eod-todo-csm-tracker.md` (new) | Same three skills, same `{{CSM_NAME}}` / `{{ARTIFACT_URL}}` / `{{SFDC_CSM_FILTER}}` tokens as `main`'s `skills/*/SKILL.md`, but with the shared-refresh-protocol's read-merge-write steps and the fuzzy-matcher algorithm **inlined directly** — no `{{REPO_PATH}}` pointer, since there's no local clone at cron-run time to resolve one against. |
+| `README.md` | CoWork-flavored onboarding message: fetch instructions instead of `git clone`, no mention of `setup.py` or local scheduled-task installation steps. Not "new" in the sense of an addition — it replaces the README inherited from `main` on this branch. |
+| `scripts/setup.py`, `scripts/build-artifact.py` | Not used on this branch. Their jobs (token substitution, artifact publish) happen live in the setup conversation instead of via script execution. Left unused, not deleted from the branch's copy of `scripts/` — no need to actively remove them, they're simply not part of the CoWork flow. |
 | `scripts/migrate-csm-tracker.py` | Not applicable — no CSM Tracker predecessor exists for a fresh CoWork user. Out of scope, not solved here. |
 | Data model, write-lock protocol, fuzzy-matcher algorithm | Unchanged from `main`. Already artifact-tool-based, not filesystem-based — nothing about the protocol assumed Claude Code specifically. |
+| `skills/<name>/SKILL.md` subdirectories (inherited from `main`) | Still present on this branch, unused — `main`'s original per-skill subdirectories (with their `{{REPO_PATH}}` token) coexist alongside the new flat `skills/<name>.md` files above. Inherited-but-unused, not to be deleted; out of scope for this design. |
 
 ### Setup sequence
 

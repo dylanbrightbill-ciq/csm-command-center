@@ -42,17 +42,20 @@ your name:
 
 > Hi Claude, I'd like to set up my own CSM Command Center. Use `curl` via
 > Bash (not WebFetch — it summarizes large files instead of returning them
-> raw) to fetch these four files from the `cowork` branch of
+> raw) to fetch these five files from the `cowork` branch of
 > `https://raw.githubusercontent.com/dylanbrightbill-ciq/csm-command-center/cowork/`:
 > `skills/bob-sfdc-sync.md`, `skills/morning-meeting-prep.md`,
 > `skills/eod-todo-csm-tracker.md`, `src/artifact/command-center.html`, and
 > `scripts/empty-seed.json`. My name is **[Your Full Name, exactly as it
 > appears in Salesforce]**. Please fill in my name on the three skill files,
-> publish my personal dashboard artifact seeded with the empty seed data,
-> then create three scheduled tasks — one per skill file, using its filled-in
-> text as the task prompt — on these schedules: `bob-sfdc-sync` Mon/Wed/Fri
-> 5am, `morning-meeting-prep` weekdays 7am, `eod-todo-csm-tracker` weekdays
-> 3:30pm.
+> then publish my personal dashboard artifact seeded with the empty seed
+> data. Once you have the published artifact's URL, fill that URL in on the
+> three skill files' `{{ARTIFACT_URL}}` tokens too (and their
+> `{{SFDC_CSM_FILTER}}` token, if my Salesforce CSM filter value differs from
+> my name above). Then create three scheduled tasks — one per skill file,
+> using its fully filled-in text as the task prompt — on these schedules:
+> `bob-sfdc-sync` Mon/Wed/Fri 5am, `morning-meeting-prep` weekdays 7am,
+> `eod-todo-csm-tracker` weekdays 3:30pm.
 
 **Step 2.** Claude will publish your dashboard and give you a link.
 **Bookmark it** — that's your Command Center from now on.

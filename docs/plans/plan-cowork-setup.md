@@ -20,6 +20,15 @@
 
 ---
 
+**Note (post-execution):** two things changed during execution and are
+recorded as rulings in `.superpowers/sdd/plan-cowork-setup/progress.md`: (a)
+files ended up at the repo root on the `cowork` branch (e.g. `skills/*.md`,
+`README.md`), not under a `cowork/` subdirectory as this plan's paths below
+literally say; (b) the fetch mechanism is `curl` via Bash, not `WebFetch`.
+The task sections below are left as-written — they're the historical record
+of what was actually dispatched — see the progress ledger for the full
+rulings and fix commits.
+
 ## File Structure
 
 | File | Responsibility |

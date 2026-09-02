@@ -119,9 +119,11 @@ e. Follow this lock protocol before publishing: check `syncLocks.todos` —
    since step b), do the merge in (d), publish, clear `syncLocks.todos`.
 
 f. Set `lastSynced.eodTodo` to the current ISO timestamp. Leave `accounts`,
-   `overrides`, `meetings`, `customTypes`, `layout`, `kpiVisible`, `sfBaseUrl`,
-   `columnSort`, `columnWidths`, `lastSynced.salesforce`, and
-   `lastSynced.meetings` untouched — this step never modifies them.
+   `overrides`, `meetings`, `archived`, `customTypes`, `layout`, `kpiVisible`,
+   `sfBaseUrl`, `columnSort`, `columnWidths`, `lastSynced.salesforce`, and
+   `lastSynced.meetings` untouched — this step never modifies them. `archived`
+   is read in step (d) for dedup but never written. Also leave the other two
+   skills' lock keys, `syncLocks.bob` and `syncLocks.meetings`, untouched.
 
 g. Regenerate the full HTML: replace the `#seed-data` script block's contents
    with `JSON.stringify(mergedPayload)`, keeping every other byte of the

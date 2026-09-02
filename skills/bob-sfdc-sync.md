@@ -27,7 +27,9 @@ separate news/leadership-change digest and is not touched by this task.
      needed here, unlike meeting-prep/eod-todo which resolve free-text
      account names.
    - Replace only the Salesforce-owned fields on each matched account. Leave
-     `overrides`, `meetings`, `tasks`, and `archived` completely untouched.
+     `overrides`, `meetings`, `tasks`, and `archived` completely untouched,
+     along with the other two skills' lock keys, `syncLocks.meetings` and
+     `syncLocks.todos`.
    - Publish, clear `syncLocks.bob`, set `lastSynced.salesforce` to now.
 
 3. If nothing changed since the last sync, skip the publish — don't write a

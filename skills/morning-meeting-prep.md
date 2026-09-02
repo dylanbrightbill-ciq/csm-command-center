@@ -59,11 +59,20 @@ Command Center artifact ("Command Center", {{ARTIFACT_URL}})
      notes: "", notesOpen: false, sources: [...] }`. If an entry already
      exists for that account today (a re-run), overwrite its `brief` and
      `sources` but never touch `notes` — that's {{CSM_NAME}}'s.
-   - If no `accountId` resolves with confidence, still publish under a literal
-     `"unlinked"` key rather than dropping the brief — visible and unlinked
-     beats silently lost.
+   - If no `accountId` resolves with confidence, still publish the brief
+     rather than dropping it — but give it its own key, `"unlinked-1"`,
+     `"unlinked-2"`, etc., incrementing per unresolved meeting that day (check
+     existing keys under `meetings[<today's date>]` first so a re-run doesn't
+     collide with one already published). Never reuse a single shared
+     `"unlinked"` key — a second unresolved meeting on the same day would
+     silently overwrite the first. Visible and unlinked beats silently lost,
+     for every unresolved meeting, not just the first one.
    - Publish, clear `syncLocks.meetings`, set `lastSynced.meetings` to now.
    - If no external meetings are found today, skip the publish entirely.
+   - Leave `accounts`, `overrides`, `tasks`, and `archived` completely
+     untouched, along with the other two skills' lock keys, `syncLocks.bob`
+     and `syncLocks.todos`. This skill only owns `meetings`,
+     `lastSynced.meetings`, and `syncLocks.meetings`.
 
 ## Preferences
 - Be concise — high signal, low friction.
